@@ -1,3 +1,4 @@
 /.gradle/
 /reports/
-/generated/
+generated/
+bin
