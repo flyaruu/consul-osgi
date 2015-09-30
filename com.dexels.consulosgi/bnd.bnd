@@ -1,4 +1,4 @@
--buildpath:  \
+-buildpath: \
 	osgi.cmpn;version=5.0,\
 	slf4j.api;version=1.7,\
 	jackson-core-lgpl;version=1.9,\
@@ -8,7 +8,8 @@
 	org.apache.httpcomponents.httpasyncclient;version=4.1,\
 	org.apache.httpcomponents.httpcore;version=4.4,\
 	osgi.core;version=5.0,\
-	org.apache.httpcomponents.httpclient;version=4.4
+	org.apache.httpcomponents.httpclient;version=4.4,\
+	org.apache.commons.codec
 Bundle-Version: 0.9.0.${tstamp}
 -dsannotations:  \
 	*
