@@ -87,6 +87,7 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 			return null;
 		}
 		JsonNode reply = mapper.readTree(response.getEntity().getContent());
+		response.close();
 		return reply;
 	}
 	

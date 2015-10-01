@@ -1,5 +1,5 @@
 -runfw: org.apache.felix.framework;version='[4,5)'
--runee: JavaSE-1.7
+-runee: JavaSE-1.8
 -runsystemcapabilities: ${native_capability}
 
 -resolve.effective: active;skip:="osgi.service"
@@ -20,13 +20,16 @@
 	jackson-mapper-lgpl;version=1.9,\
 	org.apache.commons.logging,\
 	org.apache.commons.codec,\
-	com.dexels.sharedconfigstore,\
 	org.apache.httpcomponents.httpcore;version='[4.4.3,4.5)',\
 	org.apache.httpcomponents.httpclient;version='[4.4.1,4.5)',\
 	org.apache.httpcomponents.httpasyncclient;version=4.2.0,\
 	org.apache.felix.webconsole,\
 	org.apache.felix.fileinstall,\
-	org.apache.felix.webconsole.plugins.ds;version=1.0.0
+	org.apache.felix.webconsole.plugins.ds;version=1.0.0,\
+	com.dexels.consulosgi;version=latest,\
+	com.dexels.jsonhttp;version=latest,\
+	com.dexels.jsonhttp.api;version=latest,\
+	com.dexels.jsonexample;version=latest
 	org.apache.felix.webconsole
 
 -runrequires: \
