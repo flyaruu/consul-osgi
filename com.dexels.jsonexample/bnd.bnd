@@ -1,0 +1,9 @@
+-buildpath: \
+	osgi.core,\
+	osgi.cmpn;version=5.0.0,\
+	com.dexels.jsonhttp.api;version=latest,\
+	jackson-core-lgpl,\
+	jackson-mapper-lgpl
+-dsannotations: *
+Bundle-Version: 0.0.0.${tstamp}
+Private-Package: com.dexels.jsonexample
