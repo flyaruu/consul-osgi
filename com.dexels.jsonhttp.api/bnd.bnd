@@ -1,0 +1,7 @@
+-baseline: *
+-buildpath: \
+	osgi.annotation;version=6.0.1,\
+	jackson-core-lgpl,\
+	jackson-mapper-lgpl
+Bundle-Version: 1.0.0.${tstamp}
+Export-Package: com.dexels.jsonhttp.api
