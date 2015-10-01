@@ -1,6 +1,5 @@
 package com.dexels.jsonexample;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.text.DateFormat;
@@ -59,11 +58,8 @@ public class ElasticSearchInserter implements Runnable{
 				String index = nextIndexId();
 				JsonNode request = createInput(index);
 				JsonNode result = jsonHttpDriver.callJson(request, "/logstash-1/"+index, "POST");
-				System.err.println("Request:");
 				mapper.writerWithDefaultPrettyPrinter().writeValue(System.err, request);
-
 				System.err.println("Inserting: "+index);
-//				mapper.writerWithDefaultPrettyPrinter().writeValue(System.err, result);
 			} catch (Throwable e) {
 				e.printStackTrace();
 			}finally {

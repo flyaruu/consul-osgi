@@ -3,10 +3,7 @@ package com.dexels.jsonhttp;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.http.HttpRequestFactory;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
