@@ -1,36 +1,33 @@
-package com.dexels.sharedconfigstore.consul.impl;
+package com.dexels.sharedconfigstore.http.impl;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dexels.sharedconfigstore.consul.ConsulResourceEvent;
 import com.dexels.sharedconfigstore.consul.ConsulResourceListener;
 import com.dexels.sharedconfigstore.consul.LongPollingScheduler;
+import com.dexels.sharedconfigstore.http.HttpApi;
 
 @Component(name = "dexels.consul.listener", immediate = true,configurationPolicy=ConfigurationPolicy.REQUIRE)
 public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 
-//    private Thread checkThread;
+	//    private Thread checkThread;
 	private String consulServer = null;
 	public static final String KVPREFIX = "/v1/kv/";
 	public static final String CATALOG = "/v1/catalog/services";
@@ -44,26 +41,33 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 	private final Set<ConsulResourceListener> resourceListeners = new HashSet<>();
 	private final static Logger logger = LoggerFactory.getLogger(LongPollingHttpListenerImpl.class);
 	private CloseableHttpAsyncClient client;
-	private CloseableHttpClient syncClient;
-	private ObjectMapper mapper;
 	private String servicePrefix;
-
-    
+	private String containerInfoPrefix;
+	private HttpApi consulClient;
+	
 	@Activate
     public void activate(Map<String, Object> settings) {
-		mapper = new ObjectMapper().configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);;
 		this.servicePrefix = (String)settings.get("servicePrefix");
+		this.containerInfoPrefix = (String)settings.get("containerInfoPrefix");
 		int timeout = Integer.parseInt(blockIntervalInSeconds) + 10;
-		consulServer = (String) settings.get("consulServer");
+		consulServer = this.consulClient.getHost();
         RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
                 .setConnectionRequestTimeout(timeout * 1000).setSocketTimeout(timeout * 1000).build();
-        client = HttpAsyncClients.custom().setDefaultRequestConfig(config)
-                .build();
-        syncClient = HttpClients.custom().setDefaultRequestConfig(config).build();
-        
+        client = HttpAsyncClients.custom().setDefaultRequestConfig(config).build();
+//        syncClient = HttpClients.custom().setDefaultRequestConfig(config).build();
         client.start();
     }
+	
+	@Reference(unbind="clearConsulClient", policy=ReferencePolicy.DYNAMIC)
+	public void setConsulClient(HttpApi httpApi) {
+		this.consulClient = httpApi;
+	}
 
+	public void clearConsulClient(HttpApi httpApi) {
+		this.consulClient = null;
+	}
+
+	
 	public void monitorURL(final String path) {
 		Integer blockIndex = lastIndexes.get(path);
 		String baseURL = consulServer+path+"?wait="+blockIntervalInSeconds+"s";
@@ -76,21 +80,8 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
         } catch (Exception e) {
             logger.error("Got Exception on performing GET: ", e);
         }
-        
 	}
 
-	@Override
-	public JsonNode queryPath(String path) throws IOException {
-		final HttpGet get = new HttpGet(consulServer+path);
-		CloseableHttpResponse response = syncClient.execute(get);
-		if(response.getStatusLine().getStatusCode()>=300) {
-			return null;
-		}
-		JsonNode reply = mapper.readTree(response.getEntity().getContent());
-		response.close();
-		return reply;
-	}
-	
 	@Override
 	public void callFailed(String key, int responseCode) {
         logger.warn("Failed calling: "+key+" with code: "+responseCode+" sleeping to be sure");
@@ -107,7 +98,7 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 		JsonNode old = lastValues.get(key);
 		
 		if(prev!=null && prev.equals(index)) {
-			logger.info("No real change");
+//			logger.info("No real change");
 		} else {
 			lastIndexes.put(key, index);
 	        lastValues.put(key,value);
@@ -119,7 +110,7 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 
 	private void notifyListeners(String key, JsonNode oldValue, JsonNode newValue) {
 		try {
-			ConsulResourceEvent cre = new ConsulResourceEvent(key, oldValue, newValue,servicePrefix);
+			ConsulResourceEvent cre = new ConsulResourceEvent(key, oldValue, newValue,servicePrefix,containerInfoPrefix);
 			for (ConsulResourceListener c : resourceListeners) {
 				c.resourceChanged(cre);
 			}
@@ -144,5 +135,6 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 		resourceListeners.remove(listener);
 		
 	}
+
 
 }

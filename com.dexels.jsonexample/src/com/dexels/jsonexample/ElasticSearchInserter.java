@@ -64,7 +64,7 @@ public class ElasticSearchInserter implements Runnable{
 				e.printStackTrace();
 			}finally {
 				try {
-					Thread.sleep(random.nextInt(500));
+					Thread.sleep(random.nextInt(5000));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

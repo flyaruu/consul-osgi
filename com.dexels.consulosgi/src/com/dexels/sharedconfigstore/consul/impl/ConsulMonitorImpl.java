@@ -7,7 +7,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.osgi.framework.InvalidSyntaxException;
@@ -16,29 +18,32 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dexels.sharedconfigstore.consul.ConsulResourceEvent;
 import com.dexels.sharedconfigstore.consul.ConsulResourceListener;
-import com.dexels.sharedconfigstore.consul.ConsulService;
+import com.dexels.sharedconfigstore.consul.DiscoveredService;
 import com.dexels.sharedconfigstore.consul.LongPollingScheduler;
+import com.dexels.sharedconfigstore.consul.PublishedService;
+import com.dexels.sharedconfigstore.http.HttpApi;
 
 @Component(name="dexels.consul.monitor",immediate=true)
 public class ConsulMonitorImpl implements ConsulResourceListener {
 	
 	private LongPollingScheduler consulListener = null;
-//	private final ObjectMapper mapper = new ObjectMapper().configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);;
+	private HttpApi httpApi = null;
 
-	private final Map<String,ConsulService> detectedServices = new HashMap<>();
+	private final Map<String,DiscoveredServiceImpl> detectedServices = new HashMap<>();
 	private ConfigurationAdmin configAdmin;
-
 	private final Map<String,Configuration> resourcePids = new HashMap<>();
+	private final Map<String,Configuration> localResourcePids = new HashMap<>();
 	
+	private final Map<Integer,Map<String,PublishedService>> sharedServices = new HashMap<>();
 	
 	private final static Logger logger = LoggerFactory.getLogger(ConsulMonitorImpl.class);
-
 	
 	@Activate
 	public void activate() {
@@ -49,6 +54,7 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 	
 	public void deactivate() {
 		consulListener.removeConsulResourceListener(this);
+		// remove resourcePids (& localResourcePids)
 	}
 	
 	@Reference(unbind="clearConsulListener",policy=ReferencePolicy.DYNAMIC)
@@ -59,6 +65,16 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 	public void clearConsulListener(LongPollingScheduler scheduler) {
 		consulListener = null;
 	}
+	
+	
+	@Reference(unbind="clearHttpApi",policy=ReferencePolicy.DYNAMIC)
+	public void setHttpApi(HttpApi httpApi) {
+		this.httpApi = httpApi;
+	}
+
+	public void clearHttpApi(HttpApi httpApi) {
+		this.httpApi = null;
+	}
 
 	@Override
 	public void resourceChanged(ConsulResourceEvent event) {
@@ -67,56 +83,51 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 			Iterator<String> names = services.getFieldNames();
 			
 			// copy, so orphans can be detected
-			Map<String,ConsulService> remaining = new HashMap<>(detectedServices);
-			Map<String,ConsulService> newServices = new HashMap<>();
+			Map<String,DiscoveredServiceImpl> remaining = new HashMap<>(detectedServices);
+			Map<String,DiscoveredServiceImpl> newServices = new HashMap<>();
+			ObjectMapper mapper = new ObjectMapper().configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);;
 			while (names.hasNext()) {
 				try {
 					String serviceName = names.next();
-//				System.err.println(">> name: "+serviceName);
-					ArrayNode serviceDetails = (ArrayNode) consulListener.queryPath("/v1/catalog/service/"+serviceName);
+					ArrayNode serviceDetails = (ArrayNode) httpApi.get("/v1/catalog/service/"+serviceName);
 					for (JsonNode serv : serviceDetails) {
 						String serviceId = ((ObjectNode)serv).get("ServiceID").asText();
-//					mapper.writerWithDefaultPrettyPrinter().writeValue(System.err, serviceDetails);
 						String url = "/v1/kv/"+event.getServicePrefix()+"/"+serviceId+"?recurse";
-						JsonNode serviceAttributes = consulListener.queryPath(url);
-//					if(serviceAttributes!=null) {
-//						mapper.writerWithDefaultPrettyPrinter().writeValue(System.err, serviceAttributes);
-//					}
-						ConsulService cs = new ConsulService((ObjectNode)serv, (ArrayNode)serviceAttributes,event.getServicePrefix());
-//						System.err.println("Service: \n"+cs);
+						JsonNode serviceAttributes = httpApi.get(url);
+
+						String containerInfo = "/v1/kv/"+event.getContainerInfoPrefix()+"/"+serviceId+"?recurse";
+						JsonNode containerInfoAttributes = httpApi.get(containerInfo);
+						System.err.println("Querying container info from: " + containerInfo);
+						if (containerInfoAttributes != null) {
+							mapper.writerWithDefaultPrettyPrinter().writeValue(System.err, containerInfoAttributes);
+						}
+
+						DiscoveredServiceImpl cs = new DiscoveredServiceImpl((ObjectNode)serv, (ArrayNode)serviceAttributes,(ArrayNode)containerInfoAttributes,event.getServicePrefix(),event.getContainerInfoPrefix());
 						if(remaining.containsKey(serviceId)) {
 							// tick off
-							System.err.println("ServiceId: "+serviceId+" is still present");
+							logger.info("ServiceId: "+serviceId+" is still present");
 							remaining.remove(serviceId);
 						} else {
-							System.err.println("ServiceId: "+serviceId+"  seems to be new");
+							logger.info("ServiceId: "+serviceId+"  seems to be new");
 							newServices.put(serviceId, cs);
 						}
 					}
-					
-//				detectedServices.
-
 				} catch (Throwable e) {
-					e.printStackTrace();
+					logger.error("Error: ", e);
 				}
-				
 			}
-
-//		for (String orphan : remaining.keySet()) {
-				for (Entry<String,ConsulService> e : remaining.entrySet()) {
-				System.err.println("removing: "+e.getKey());
+			for (Entry<String,DiscoveredServiceImpl> e : remaining.entrySet()) {
+				logger.info("removing: "+e.getKey());
 				removeService(e.getKey(),e.getValue());
 				detectedServices.remove(e.getKey());
 			}
-			for (Entry<String,ConsulService> e : newServices.entrySet()) {
+			for (Entry<String,DiscoveredServiceImpl> e : newServices.entrySet()) {
 				addService(e.getKey(),e.getValue());
 				detectedServices.put(e.getKey(),e.getValue());
 			}
 		} catch (IOException e) {
 			logger.error("Error: ", e);
 		}
-		
-		
 	}
 
     @Reference(name = "ConfigAdmin", unbind = "clearConfigAdmin")
@@ -128,7 +139,7 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
         this.configAdmin = null;
     }
     
-	private void removeService(String key, ConsulService value) {
+	private void removeService(String key, DiscoveredService value) {
 		//configAdmin.getConfiguration(pid, location)
 		Configuration cc = resourcePids.get(value.getId());
 		if(cc!=null) {
@@ -140,14 +151,48 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 		}
 	}
 
-	private void addService(String key, ConsulService value) throws IOException {
+	private void addService(String key, DiscoveredServiceImpl value) throws IOException {
+		String containerHostname = System.getenv("HOSTNAME");
+		
+		boolean isMe = containerHostname!=null && containerHostname.equals(value.getContainerHostname());
+		logger.info("My ContainerHostname: "+containerHostname+" discovered: "+value.getContainerHostname());
 		String type = value.getAttributes().get("type");
 		if(type!=null) {
 			String factoryPid = type;
 			String filter = "(id="+value.getId()+")";
 			Configuration cc = emitFactoryIfChanged(factoryPid, filter, value.createDictionary());
 			resourcePids.put(value.getId(), cc);
+			if(isMe) {
+				addLocalService(value, type);
+			}
 		}
+	}
+
+	@Reference(unbind="removeSharedService",cardinality=ReferenceCardinality.MULTIPLE,policy=ReferencePolicy.DYNAMIC)
+	public void addSharedService(PublishedService service) {
+		int port = service.getPort();
+		String id = service.getId();
+		Map<String,PublishedService> shared = this.sharedServices.get(port);
+		if(shared==null) {
+			shared = new HashMap<>();
+			this.sharedServices.put(port, shared);
+		}
+		shared.put(id, service);
+	}
+	
+	public void removeSharedService(PublishedService service) {
+		int port = service.getPort();
+//		String id = service.getId();
+		Map<String,PublishedService> shared = this.sharedServices.get(port);
+		shared.remove(service);
+	}
+	
+	private void addLocalService(DiscoveredServiceImpl value, String type) throws IOException {
+		String localFactoryPid = "local."+type;
+		String localFilter = "(serviceId="+value.getId()+")";
+		Configuration localConfig = emitFactoryIfChanged(localFactoryPid, localFilter, value.createDictionary());
+		localConfig.update();
+		logger.info("Emitting config with factoryPid: {} and local settings: {} and filter: {}",localFactoryPid,value.getAttributes(),null);
 	}
 
 	private Configuration emitFactoryIfChanged(String factoryPid, String filter, Dictionary<String, Object> settings)
@@ -165,11 +210,14 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 			}
 			if (c != null && c.length > 0) {
 				cc = c[0];
+			} else {
+				logger.info("No config found");
 			}
 		} catch (InvalidSyntaxException e) {
 			logger.error("Error in filter: {}", filter, e);
 		}
 		if (cc == null) {
+			logger.info("creating.");
 			cc = configAdmin.createFactoryConfiguration(factoryPid, null);
 		}
 		return cc;
@@ -187,6 +235,7 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 			// this will make this component 'own' this configuration, unsure if
 			// this is desirable.
 			c.update(settings);
+			logger.info("updating");
 		}
 		return c;
 	}

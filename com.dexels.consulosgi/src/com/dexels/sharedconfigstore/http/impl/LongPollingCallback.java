@@ -1,4 +1,4 @@
-package com.dexels.sharedconfigstore.consul.impl;
+package com.dexels.sharedconfigstore.http.impl;
 
 import java.io.IOException;
 

@@ -9,14 +9,20 @@
 	org.apache.httpcomponents.httpcore;version=4.4,\
 	osgi.core;version=5.0,\
 	org.apache.httpcomponents.httpclient;version=4.4,\
-	org.apache.commons.codec
+	org.apache.commons.codec,\
+	javax.servlet;version=3.0
 Bundle-Version: 0.9.0.${tstamp}
 -dsannotations:  \
 	*
 -sources: src
-Private-Package:  \
+Private-Package: \
 	com.dexels.sharedconfigstore,\
 	com.dexels.sharedconfigstore.consul,\
-	com.dexels.sharedconfigstore.consul.impl
-Export-Package:  \
-	com.dexels.sharedconfigstore.api
+	com.dexels.sharedconfigstore.consul.impl,\
+	com.dexels.sharedconfigstore.consul.local.impl,\
+	com.dexels.sharedconfigstore.servlet.example,\
+	com.dexels.sharedconfigstore.http.impl,\
+	com.dexels.sharedconfigstore.consul.test
+Export-Package: \
+	com.dexels.sharedconfigstore.api,\
+	com.dexels.sharedconfigstore.http

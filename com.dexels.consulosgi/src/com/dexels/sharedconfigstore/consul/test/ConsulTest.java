@@ -1,10 +1,10 @@
-package com.dexels.sharedconfigstore.consul;
+package com.dexels.sharedconfigstore.consul.test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.dexels.sharedconfigstore.consul.impl.ConsulMonitorImpl;
-import com.dexels.sharedconfigstore.consul.impl.LongPollingHttpListenerImpl;
+import com.dexels.sharedconfigstore.http.impl.LongPollingHttpListenerImpl;
 
 public class ConsulTest {
 

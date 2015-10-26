@@ -2,3 +2,4 @@
 /reports/
 generated/
 bin
+.DS_Store

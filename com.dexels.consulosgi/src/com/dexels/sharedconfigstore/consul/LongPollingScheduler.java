@@ -1,7 +1,5 @@
 package com.dexels.sharedconfigstore.consul;
 
-import java.io.IOException;
-
 import org.codehaus.jackson.JsonNode;
 
 public interface LongPollingScheduler {
@@ -13,9 +11,9 @@ public interface LongPollingScheduler {
 
 	public void removeConsulResourceListener(ConsulResourceListener listener);
 
-	public JsonNode queryPath(String path) throws IOException;
 
 	public void monitorURL(String string);
+
 
 
 }

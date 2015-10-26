@@ -8,13 +8,15 @@ public final class ConsulResourceEvent {
 	private final JsonNode newValue;
 	private final String path;
 	private final String servicePrefix;
+	private final String containerInfoPrefix;
 	
-	public ConsulResourceEvent(String path, JsonNode oldValue, JsonNode newValue,String servicePrefix) {
+
+	public ConsulResourceEvent(String path, JsonNode oldValue, JsonNode newValue,String servicePrefix,String containerInfoPrefix) {
 		this.path = path;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
 		this.servicePrefix = servicePrefix;
-		
+		this.containerInfoPrefix = containerInfoPrefix;
 	}
 
 	public String getPath() {
@@ -32,4 +34,9 @@ public final class ConsulResourceEvent {
 	public String getServicePrefix() {
 		return servicePrefix;
 	}
+	
+	public String getContainerInfoPrefix() {
+		return containerInfoPrefix;
+	}
+
 }
