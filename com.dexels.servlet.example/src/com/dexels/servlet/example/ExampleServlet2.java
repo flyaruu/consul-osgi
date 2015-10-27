@@ -1,4 +1,4 @@
-package com.dexels.sharedconfigstore.servlet.example;
+package com.dexels.servlet.example;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 
-@Component(name="servlet.example.two", property={"alias=/bye","name=bombom","method=GET","response=JSON","type=jeeson.http"})
+@Component(name="servlet.example.two", property={"alias=/bye","name=bombom","method=GET","response=JSON","type=http.json"})
 public class ExampleServlet2 extends HttpServlet implements Servlet {
 
 	

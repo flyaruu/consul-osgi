@@ -20,7 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dexels.sharedconfigstore.consul.ConsulApi;
-import com.dexels.sharedconfigstore.http.HttpApi;
+import com.dexels.sharedconfigstore.http.HttpJsonApi;
+import com.dexels.sharedconfigstore.http.HttpRawApi;
 
 @Component(name="dexels.consul.publisher",configurationPolicy=ConfigurationPolicy.REQUIRE)
 public class ConsulServicePublisher implements ConsulApi {
@@ -32,7 +33,8 @@ public class ConsulServicePublisher implements ConsulApi {
 	public static final String KVPREFIX = "/v1/kv/";
 	private ObjectMapper mapper;
 	private String servicePrefix;
-	private HttpApi consulClient;
+	private HttpJsonApi consulClient;
+	private HttpRawApi rawConsulClient;
 	private Set<String> tags;
 
 	@Activate
@@ -51,13 +53,23 @@ public class ConsulServicePublisher implements ConsulApi {
 	}
 
 	@Reference(unbind="clearConsulClient", policy=ReferencePolicy.DYNAMIC)
-	public void setConsulClient(HttpApi httpApi) {
+	public void setConsulClient(HttpJsonApi httpApi) {
 		this.consulClient = httpApi;
 	}
 
-	public void clearConsulClient(HttpApi httpApi) {
+	public void clearConsulClient(HttpJsonApi httpApi) {
 		this.consulClient = null;
 	}
+	
+	@Reference(unbind="clearRawConsulClient", policy=ReferencePolicy.DYNAMIC)
+	public void setRawConsulClient(HttpRawApi httpApi) {
+		this.rawConsulClient = httpApi;
+	}
+
+	public void clearRawConsulClient(HttpRawApi httpApi) {
+		this.rawConsulClient = null;
+	}
+	
 	private Set<String> parseTags(String tags) {
 		if(tags==null) {
 			return Collections.emptySet();
@@ -71,36 +83,30 @@ public class ConsulServicePublisher implements ConsulApi {
 	}
 	
 	@Override
-	public String registerService(String name, String host, int port, String alias, Map<String,Object> attributes, String tags) throws IOException {
+	public String registerService(String name, String host, int port, String alias, Map<String,Object> attributes, Set<String> tags) throws IOException {
 		ObjectNode request = mapper.createObjectNode();
-//		String id = UUID.randomUUID().toString();
-//		request.put("ID", id);
 		request.put("Name", name);
 		ArrayNode tagsNode = mapper.createArrayNode();
 		request.put("Tags", tagsNode);
-		for (String t : this.tags) {
-			tagsNode.add(t);
-		}
-		if(tags!=null) {
-			for (String tag : tags.split(",")) {
-				tagsNode.add(tag);
-			}
+		Set<String> localTags = new HashSet<>(this.tags);
+		localTags.addAll(tags);
+		for (String tag : localTags) {
+			tagsNode.add(tag);
 		}
 		request.put("Address", host);
 		request.put("Port", port);
-		consulClient.put(SERVICE_REGISTER, request,false);
-		
-		writeAttributes(host, port,alias, attributes);
+		consulClient.putJson(SERVICE_REGISTER, request,false);
+		writeAttributes(host, port,name, attributes);
 		return name;
 	}
 	
 	@Override
 	public void cleanAttributes(String host, int port) throws IOException {
-		consulClient.delete(KVPREFIX+servicePrefix+"/"+host+"/"+port+"?recurse");
+		consulClient.deleteJson(KVPREFIX+servicePrefix+"/"+host+"/"+port+"?recurse");
 	}
 	
-	private void writeAttributes(String host, int port, String alias, Map<String, Object> attributes) throws IOException {
-		ObjectNode result = mapper.createObjectNode();
+	private void writeAttributes(String host, int port, String name, Map<String, Object> attributes) throws IOException {
+//		ObjectNode result = mapper.createObjectNode();
 		for (Map.Entry<String, Object> e : attributes.entrySet()) {
 			switch (e.getKey()) {
 			case "objectClass":
@@ -114,16 +120,16 @@ public class ConsulServicePublisher implements ConsulApi {
 			default:
 				break;
 			}
-			result.put(e.getKey(), (String)e.getValue());
+//			result.put(e.getKey(), (String)e.getValue());
+			rawConsulClient.put(KVPREFIX+servicePrefix+"/"+host+"/"+port+"/"+name+"/"+e.getKey(),((String)e.getValue()).getBytes(),false);
 		}
-		consulClient.put(KVPREFIX+servicePrefix+"/"+host+"/"+port+"/"+alias,result,false);
 		
 	}
 
 	@Override
 	public void deregisterService(String id) {
 		try {
-			consulClient.delete(KVPREFIX+id+"?recurse");
+			consulClient.deleteJson(KVPREFIX+id+"?recurse");
 		} catch (IOException e) {
 			logger.error("Error: ", e);
 		}

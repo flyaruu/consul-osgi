@@ -28,10 +28,11 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dexels.sharedconfigstore.http.HttpApi;
+import com.dexels.sharedconfigstore.http.HttpJsonApi;
+import com.dexels.sharedconfigstore.http.HttpRawApi;
 
 @Component(name="consul.http",configurationPolicy=ConfigurationPolicy.REQUIRE)
-public class ConsulHttpApi implements HttpApi {
+public class ConsulHttpApi implements HttpJsonApi, HttpRawApi {
 	
 	
 	private final static Logger logger = LoggerFactory.getLogger(ConsulHttpApi.class);
@@ -52,42 +53,51 @@ public class ConsulHttpApi implements HttpApi {
     }
 	
 	@Override
-	public JsonNode get(String path) throws IOException {
+	public JsonNode getJson(String path) throws IOException {
 		final HttpGet request = new HttpGet(consulServer+path);
-		return processRequest(request,true);
+		return processJsonRequest(request,true);
 	}
 
 	@Override
-	public JsonNode head(String path) throws IOException {
+	public JsonNode headJson(String path) throws IOException {
 		final HttpHead request = new HttpHead(consulServer+path);
-		return processRequest(request,true);
+		return processJsonRequest(request,true);
 	}
 	
 	@Override
-	public JsonNode delete(String path) throws IOException {
+	public JsonNode deleteJson(String path) throws IOException {
 		final HttpDelete request = new HttpDelete(consulServer+path);
-		return processRequest(request,false);
+		return processJsonRequest(request,false);
 	}
 	
 	@Override
-	public JsonNode post(String path, JsonNode body,boolean expectReply) throws IOException {
+	public JsonNode postJson(String path, JsonNode body,boolean expectReply) throws IOException {
 		final HttpPost request = new HttpPost(consulServer+path);
 		if(body!=null) {
 			request.setEntity(createEntity(body));
 		}
-		return processRequest(request,expectReply);
+		return processJsonRequest(request,expectReply);
 	}
 
 	@Override
-	public JsonNode put(String path, JsonNode body,boolean expectReply) throws IOException {
+	public JsonNode putJson(String path, JsonNode body,boolean expectReply) throws IOException {
 		debugCall("put",path,body);
 		final HttpPut request = new HttpPut(consulServer+path);
 		if(body!=null) {
 			request.setEntity(createEntity(body));
 		}
-		return processRequest(request,expectReply);
+		return processJsonRequest(request,expectReply);
 	}
 
+	@Override
+	public byte[] put(String path, byte[] body,boolean expectReply) throws IOException {
+		final HttpPut request = new HttpPut(consulServer+path);
+		if(body!=null) {
+			request.setEntity(new ByteArrayEntity(body));
+		}
+		return processRawRequest(request,expectReply);
+	}
+	
 	private void debugCall(String method, String path, JsonNode body) throws JsonGenerationException, JsonMappingException, IOException {
 		logger.info("Debugging {} request to path: {}",method,path);
 		if(body!=null) {
@@ -95,7 +105,7 @@ public class ConsulHttpApi implements HttpApi {
 		}
 	}
 
-	private JsonNode processRequest(final HttpUriRequest request, boolean expectReply)
+	private JsonNode processJsonRequest(final HttpUriRequest request, boolean expectReply)
 			throws IOException, ClientProtocolException, JsonProcessingException {
 		CloseableHttpResponse response = syncClient.execute(request);
 		try {
@@ -111,6 +121,23 @@ public class ConsulHttpApi implements HttpApi {
 		return null;
 	}
 
+	private byte[] processRawRequest(final HttpUriRequest request, boolean expectReply)
+			throws IOException, ClientProtocolException, JsonProcessingException {
+		CloseableHttpResponse response = syncClient.execute(request);
+		try {
+			if (response.getStatusLine().getStatusCode() >= 300) {
+				return null;
+			}
+			if (expectReply) {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				response.getEntity().writeTo(baos);
+				return baos.toByteArray();
+			}
+		} finally {
+			response.close();
+		}
+		return null;
+	}
 	// TODO Something streamier perhaps
 	private HttpEntity createEntity(JsonNode body) throws IOException, JsonGenerationException, JsonMappingException {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -123,5 +150,29 @@ public class ConsulHttpApi implements HttpApi {
 	public String getHost() {
 		return this.consulServer;
 	}
-	
+
+	@Override
+	public byte[] get(String path) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public byte[] head(String path) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public byte[] delete(String path) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public byte[] post(String path, byte[] body, boolean expectReply) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.dexels.sharedconfigstore.consul.ConsulResourceEvent;
 import com.dexels.sharedconfigstore.consul.ConsulResourceListener;
 import com.dexels.sharedconfigstore.consul.LongPollingScheduler;
-import com.dexels.sharedconfigstore.http.HttpApi;
+import com.dexels.sharedconfigstore.http.HttpJsonApi;
 
 @Component(name = "dexels.consul.listener", immediate = true,configurationPolicy=ConfigurationPolicy.REQUIRE)
 public class LongPollingHttpListenerImpl implements LongPollingScheduler {
@@ -43,7 +43,7 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 	private CloseableHttpAsyncClient client;
 	private String servicePrefix;
 	private String containerInfoPrefix;
-	private HttpApi consulClient;
+	private HttpJsonApi consulClient;
 	
 	@Activate
     public void activate(Map<String, Object> settings) {
@@ -59,11 +59,11 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
     }
 	
 	@Reference(unbind="clearConsulClient", policy=ReferencePolicy.DYNAMIC)
-	public void setConsulClient(HttpApi httpApi) {
+	public void setConsulClient(HttpJsonApi httpApi) {
 		this.consulClient = httpApi;
 	}
 
-	public void clearConsulClient(HttpApi httpApi) {
+	public void clearConsulClient(HttpJsonApi httpApi) {
 		this.consulClient = null;
 	}
 

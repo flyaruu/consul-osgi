@@ -28,13 +28,13 @@ import com.dexels.sharedconfigstore.consul.ConsulResourceListener;
 import com.dexels.sharedconfigstore.consul.DiscoveredService;
 import com.dexels.sharedconfigstore.consul.LongPollingScheduler;
 import com.dexels.sharedconfigstore.consul.PublishedService;
-import com.dexels.sharedconfigstore.http.HttpApi;
+import com.dexels.sharedconfigstore.http.HttpJsonApi;
 
 @Component(name="dexels.consul.monitor",immediate=true)
 public class ConsulMonitorImpl implements ConsulResourceListener {
 	
 	private LongPollingScheduler consulListener = null;
-	private HttpApi httpApi = null;
+	private HttpJsonApi httpApi = null;
 
 	private final Map<String,DiscoveredServiceImpl> detectedServices = new HashMap<>();
 	private ConfigurationAdmin configAdmin;
@@ -68,11 +68,11 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 	
 	
 	@Reference(unbind="clearHttpApi",policy=ReferencePolicy.DYNAMIC)
-	public void setHttpApi(HttpApi httpApi) {
+	public void setHttpApi(HttpJsonApi httpApi) {
 		this.httpApi = httpApi;
 	}
 
-	public void clearHttpApi(HttpApi httpApi) {
+	public void clearHttpApi(HttpJsonApi httpApi) {
 		this.httpApi = null;
 	}
 
@@ -89,14 +89,16 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 			while (names.hasNext()) {
 				try {
 					String serviceName = names.next();
-					ArrayNode serviceDetails = (ArrayNode) httpApi.get("/v1/catalog/service/"+serviceName);
+					ArrayNode serviceDetails = (ArrayNode) httpApi.getJson("/v1/catalog/service/"+serviceName);
 					for (JsonNode serv : serviceDetails) {
 						String serviceId = ((ObjectNode)serv).get("ServiceID").asText();
-						String url = "/v1/kv/"+event.getServicePrefix()+"/"+serviceId+"?recurse";
-						JsonNode serviceAttributes = httpApi.get(url);
+						String serviceAddress = ((ObjectNode)serv).get("ServiceAddress").asText();
+						int servicePort = ((ObjectNode)serv).get("ServicePort").asInt();
+						String url = "/v1/kv/"+event.getServicePrefix()+"/"+serviceAddress+"/"+servicePort+"/"+serviceId+"?recurse";
+						JsonNode serviceAttributes = httpApi.getJson(url);
 
 						String containerInfo = "/v1/kv/"+event.getContainerInfoPrefix()+"/"+serviceId+"?recurse";
-						JsonNode containerInfoAttributes = httpApi.get(containerInfo);
+						JsonNode containerInfoAttributes = httpApi.getJson(containerInfo);
 						System.err.println("Querying container info from: " + containerInfo);
 						if (containerInfoAttributes != null) {
 							mapper.writerWithDefaultPrettyPrinter().writeValue(System.err, containerInfoAttributes);
@@ -111,6 +113,7 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 							logger.info("ServiceId: "+serviceId+"  seems to be new");
 							newServices.put(serviceId, cs);
 						}
+						
 					}
 				} catch (Throwable e) {
 					logger.error("Error: ", e);
@@ -157,6 +160,7 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 		boolean isMe = containerHostname!=null && containerHostname.equals(value.getContainerHostname());
 		logger.info("My ContainerHostname: "+containerHostname+" discovered: "+value.getContainerHostname());
 		String type = value.getAttributes().get("type");
+		System.err.println("Attributes: "+value.getAttributes().keySet());
 		if(type!=null) {
 			String factoryPid = type;
 			String filter = "(id="+value.getId()+")";

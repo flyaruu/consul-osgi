@@ -30,7 +30,8 @@
 	com.dexels.jsonhttp;version=latest,\
 	com.dexels.jsonhttp.api;version=latest,\
 	com.dexels.jsonexample;version=latest,\
-	org.ops4j.pax.web.pax-web-extender-whiteboard
+	org.ops4j.pax.web.pax-web-extender-whiteboard,\
+	com.dexels.consulosgi.servlet;version=latest
 	org.apache.felix.webconsole
 
 -runrequires: \

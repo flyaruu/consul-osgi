@@ -1,8 +1,8 @@
 docker run \
-  -p 9200:9200 \
+  -p 9201:9200 \
   --rm \
-  --name=elasticsearch \
+  --name=elasticsearch2\
   -l SERVICE_APPLICATION=ELASTICSEARCH_API \
   -l SERVICE_TYPE=http.json \
-  -l SERVICE_NAME=elasticsearch \
+  -l SERVICE_NAME=elasticsearch2 \
 elasticsearch

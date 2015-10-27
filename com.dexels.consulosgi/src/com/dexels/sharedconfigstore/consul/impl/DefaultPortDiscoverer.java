@@ -13,8 +13,12 @@ public class DefaultPortDiscoverer implements PortDiscoverer {
 
 	@Override
 	public NetworkLocation getHostPort(int port) {
-			return new NetworkLocation("127.0.0.1",port);
-//		return new NetworkLocation("localhost", port);
+		try {
+			return new NetworkLocation(InetAddress.getLocalHost().getHostAddress(),port);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return new NetworkLocation("localhost", port);
 	}
 
 }

@@ -17,7 +17,6 @@ Bundle-Version: 0.9.0.${tstamp}
 -sources: src
 Private-Package: \
 	com.dexels.sharedconfigstore,\
-	com.dexels.sharedconfigstore.consul,\
 	com.dexels.sharedconfigstore.consul.impl,\
 	com.dexels.sharedconfigstore.consul.local.impl,\
 	com.dexels.sharedconfigstore.servlet.example,\
@@ -25,4 +24,5 @@ Private-Package: \
 	com.dexels.sharedconfigstore.consul.test
 Export-Package: \
 	com.dexels.sharedconfigstore.api,\
-	com.dexels.sharedconfigstore.http
+	com.dexels.sharedconfigstore.http,\
+	com.dexels.sharedconfigstore.consul

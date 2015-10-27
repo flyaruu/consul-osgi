@@ -1,20 +1,26 @@
 package com.dexels.sharedconfigstore.consul.impl;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dexels.sharedconfigstore.consul.DiscoveredService;
 
@@ -35,6 +41,10 @@ public class DiscoveredServiceImpl implements DiscoveredService {
 	private String containerID = null;
 	private String containerHostname = null;
 	private String exposedIP = null;
+	
+	
+	private final static Logger logger = LoggerFactory.getLogger(DiscoveredServiceImpl.class);
+
 	
 	public DiscoveredServiceImpl() {
 		
@@ -117,11 +127,35 @@ public class DiscoveredServiceImpl implements DiscoveredService {
 			for (JsonNode jsonNode : serviceAttributes) {
 				ObjectNode node = (ObjectNode) jsonNode;
 				String key = node.get("Key").asText();
-				String stripped = key.substring(servicePrefix.length()+1+this.id.length()+1,key.length());
+				String stripped = key.substring(key.lastIndexOf('/')+1);
 				byte[] decodedValue = Base64.decodeBase64(node.get("Value").asText());
-				attributes.put(stripped.replaceAll("/", "."), new String(decodedValue));
+				String valueString = new String(decodedValue);
+				System.err.println("Key: "+key+" value: "+valueString);
+//				attributes.putAll(parseJSONObject(valueString));
+
+				attributes.put(stripped, valueString);
 			}
 		}
+	}
+	
+	private Map<String,String> parseJSONObject(String json) {
+		Map<String,String> result = new HashMap<>();
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode node;
+		try {
+			node = (ObjectNode) mapper.reader().readTree(json);
+
+			Iterator<Entry<String, JsonNode>> it = node.getFields();
+			while(it.hasNext()) {
+				Entry<String, JsonNode> e = it.next();
+				result.put(e.getKey(), e.getValue().asText());
+			}
+		} catch (JsonProcessingException e1) {
+			logger.error("Not valid JSON: "+json, e1);
+		} catch (IOException e1) {
+			logger.error("Not valid JSON: "+json, e1);
+		}
+		return result;
 	}
 	
 	public String toString() {
