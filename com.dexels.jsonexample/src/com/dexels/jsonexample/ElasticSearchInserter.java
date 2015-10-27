@@ -42,7 +42,7 @@ public class ElasticSearchInserter implements Runnable{
 			this.thread.interrupt();
 		}
 	}
-	@Reference(policy=ReferencePolicy.DYNAMIC,unbind="clearJsonHttpDriver")
+	@Reference(policy=ReferencePolicy.DYNAMIC,unbind="clearJsonHttpDriver",target="(application=ELASTICSEARCH_API)")
 	public void setJsonHttpDriver(JsonHttpDriver driver) {
 		this.jsonHttpDriver = driver;
 	}
