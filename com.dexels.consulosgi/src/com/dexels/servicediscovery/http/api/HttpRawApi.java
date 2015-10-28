@@ -1,4 +1,4 @@
-package com.dexels.sharedconfigstore.http;
+package com.dexels.servicediscovery.http.api;
 
 import java.io.IOException;
 

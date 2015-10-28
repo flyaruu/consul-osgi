@@ -1,4 +1,4 @@
-package com.dexels.sharedconfigstore.consul.impl;
+package com.dexels.consulosgi.servicediscovery.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 
-import com.dexels.sharedconfigstore.consul.PublishedService;
+import com.dexels.servicediscovery.api.PublishedService;
 
 @Component(name="dexels.sharedservice", configurationPolicy=ConfigurationPolicy.REQUIRE,immediate=true)
 public class PublishedServiceImpl implements PublishedService {

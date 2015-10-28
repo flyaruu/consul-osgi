@@ -17,12 +17,18 @@ Bundle-Version: 0.9.0.${tstamp}
 -sources: src
 Private-Package: \
 	com.dexels.sharedconfigstore,\
-	com.dexels.sharedconfigstore.consul.impl,\
+	com.dexels.servicediscovery.consul.impl,\
 	com.dexels.sharedconfigstore.consul.local.impl,\
 	com.dexels.sharedconfigstore.servlet.example,\
 	com.dexels.sharedconfigstore.http.impl,\
-	com.dexels.sharedconfigstore.consul.test
+	com.dexels.sharedconfigstore.consul.test,\
+	com.dexels.consulosgi.network.impl,\
+	com.dexels.consulosgi.servicediscovery.impl,\
+	com.dexels.sharedconfigstore.consul,\
+	com.dexels.sharedconfigstore.impl
 Export-Package: \
 	com.dexels.sharedconfigstore.api,\
-	com.dexels.sharedconfigstore.http,\
-	com.dexels.sharedconfigstore.consul
+	com.dexels.consulosgi.network.api,\
+	com.dexels.servicediscovery.api,\
+	com.dexels.servicediscovery.http.api,\
+	com.dexels.sharedconfigstore.api

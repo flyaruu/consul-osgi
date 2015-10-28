@@ -1,4 +1,4 @@
-package com.dexels.sharedconfigstore.consul;
+package com.dexels.servicediscovery.api;
 
 import java.util.Map;
 import java.util.Set;

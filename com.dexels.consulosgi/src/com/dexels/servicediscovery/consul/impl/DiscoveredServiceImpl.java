@@ -1,4 +1,4 @@
-package com.dexels.sharedconfigstore.consul.impl;
+package com.dexels.servicediscovery.consul.impl;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -22,7 +22,7 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dexels.sharedconfigstore.consul.DiscoveredService;
+import com.dexels.servicediscovery.api.DiscoveredService;
 
 
 @Component(name="osgi.consul.local.service",configurationPolicy=ConfigurationPolicy.REQUIRE)

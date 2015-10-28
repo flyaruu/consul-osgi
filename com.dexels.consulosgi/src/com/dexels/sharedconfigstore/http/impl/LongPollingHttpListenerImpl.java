@@ -19,10 +19,10 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dexels.servicediscovery.http.api.HttpJsonApi;
 import com.dexels.sharedconfigstore.consul.ConsulResourceEvent;
 import com.dexels.sharedconfigstore.consul.ConsulResourceListener;
 import com.dexels.sharedconfigstore.consul.LongPollingScheduler;
-import com.dexels.sharedconfigstore.http.HttpJsonApi;
 
 @Component(name = "dexels.consul.listener", immediate = true,configurationPolicy=ConfigurationPolicy.REQUIRE)
 public class LongPollingHttpListenerImpl implements LongPollingScheduler {
@@ -54,7 +54,6 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
         RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
                 .setConnectionRequestTimeout(timeout * 1000).setSocketTimeout(timeout * 1000).build();
         client = HttpAsyncClients.custom().setDefaultRequestConfig(config).build();
-//        syncClient = HttpClients.custom().setDefaultRequestConfig(config).build();
         client.start();
     }
 	
@@ -67,13 +66,12 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 		this.consulClient = null;
 	}
 
-	
+	@Override
 	public void monitorURL(final String path) {
 		Integer blockIndex = lastIndexes.get(path);
 		String baseURL = consulServer+path+"?wait="+blockIntervalInSeconds+"s";
 		final HttpGet get = (blockIndex!=null)?new HttpGet(baseURL+"&index="+blockIndex):new HttpGet(baseURL);
         try {
-//        	System.err.println("sched to: "+get.getURI());
         	LongPollingCallback callback = new LongPollingCallback(get, path, this);
         	currentCallbacks.put(path, callback);
         	client.execute(get,callback);
@@ -98,13 +96,11 @@ public class LongPollingHttpListenerImpl implements LongPollingScheduler {
 		JsonNode old = lastValues.get(key);
 		
 		if(prev!=null && prev.equals(index)) {
-//			logger.info("No real change");
 		} else {
 			lastIndexes.put(key, index);
 	        lastValues.put(key,value);
 	        notifyListeners(key,old,value);
 		}
-//		System.err.println("Re-schedule");
         monitorURL(key);
 	}
 

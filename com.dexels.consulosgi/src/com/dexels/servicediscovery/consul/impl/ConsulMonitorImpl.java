@@ -1,4 +1,4 @@
-package com.dexels.sharedconfigstore.consul.impl;
+package com.dexels.servicediscovery.consul.impl;
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -23,14 +23,14 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dexels.servicediscovery.api.DiscoveredService;
+import com.dexels.servicediscovery.api.PublishedService;
+import com.dexels.servicediscovery.http.api.HttpJsonApi;
 import com.dexels.sharedconfigstore.consul.ConsulResourceEvent;
 import com.dexels.sharedconfigstore.consul.ConsulResourceListener;
-import com.dexels.sharedconfigstore.consul.DiscoveredService;
 import com.dexels.sharedconfigstore.consul.LongPollingScheduler;
-import com.dexels.sharedconfigstore.consul.PublishedService;
-import com.dexels.sharedconfigstore.http.HttpJsonApi;
 
-@Component(name="dexels.consul.monitor",immediate=true)
+@Component(name="consul.http.monitor",immediate=true)
 public class ConsulMonitorImpl implements ConsulResourceListener {
 	
 	private LongPollingScheduler consulListener = null;
@@ -67,7 +67,7 @@ public class ConsulMonitorImpl implements ConsulResourceListener {
 	}
 	
 	
-	@Reference(unbind="clearHttpApi",policy=ReferencePolicy.DYNAMIC)
+	@Reference(unbind="clearHttpApi",policy=ReferencePolicy.DYNAMIC,target="(type=consul)")
 	public void setHttpApi(HttpJsonApi httpApi) {
 		this.httpApi = httpApi;
 	}

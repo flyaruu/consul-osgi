@@ -1,4 +1,4 @@
-package com.dexels.sharedconfigstore.consul;
+package com.dexels.consulosgi.network.api;
 
 public class NetworkLocation {
 	private final String host;

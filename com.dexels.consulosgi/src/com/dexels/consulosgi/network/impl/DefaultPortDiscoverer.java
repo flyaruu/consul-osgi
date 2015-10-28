@@ -1,12 +1,12 @@
-package com.dexels.sharedconfigstore.consul.impl;
+package com.dexels.consulosgi.network.impl;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.dexels.sharedconfigstore.consul.NetworkLocation;
-import com.dexels.sharedconfigstore.consul.PortDiscoverer;
+import com.dexels.consulosgi.network.api.NetworkLocation;
+import com.dexels.consulosgi.network.api.PortDiscoverer;
 
 @Component(name="port.discoverer.default")
 public class DefaultPortDiscoverer implements PortDiscoverer {

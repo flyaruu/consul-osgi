@@ -19,12 +19,12 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dexels.sharedconfigstore.consul.ConsulApi;
-import com.dexels.sharedconfigstore.http.HttpJsonApi;
-import com.dexels.sharedconfigstore.http.HttpRawApi;
+import com.dexels.servicediscovery.api.ServiceRegistryApi;
+import com.dexels.servicediscovery.http.api.HttpJsonApi;
+import com.dexels.servicediscovery.http.api.HttpRawApi;
 
 @Component(name="dexels.consul.publisher",configurationPolicy=ConfigurationPolicy.REQUIRE)
-public class ConsulServicePublisher implements ConsulApi {
+public class ConsulServicePublisher implements ServiceRegistryApi {
 
 	
 	private final static Logger logger = LoggerFactory.getLogger(ConsulServicePublisher.class);
@@ -42,7 +42,6 @@ public class ConsulServicePublisher implements ConsulApi {
 		this.servicePrefix = (String)settings.get("servicePrefix");
 		this.tags = parseTags((String) settings.get("tags"));
 		this.mapper = new ObjectMapper().configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
-
 	}
 
 	@Deactivate

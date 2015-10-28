@@ -28,14 +28,14 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dexels.sharedconfigstore.http.HttpJsonApi;
-import com.dexels.sharedconfigstore.http.HttpRawApi;
+import com.dexels.servicediscovery.http.api.HttpJsonApi;
+import com.dexels.servicediscovery.http.api.HttpRawApi;
 
-@Component(name="consul.http",configurationPolicy=ConfigurationPolicy.REQUIRE)
-public class ConsulHttpApi implements HttpJsonApi, HttpRawApi {
+@Component(name="consul.http",configurationPolicy=ConfigurationPolicy.REQUIRE,property={"type=consul"})
+public class ConsulHttpClient implements HttpJsonApi, HttpRawApi {
 	
 	
-	private final static Logger logger = LoggerFactory.getLogger(ConsulHttpApi.class);
+	private final static Logger logger = LoggerFactory.getLogger(ConsulHttpClient.class);
 	private CloseableHttpClient syncClient;
 	private ObjectMapper mapper;
 	private String blockIntervalInSeconds = "20";
