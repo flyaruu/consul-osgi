@@ -1,4 +1,4 @@
-package com.dexels.consulosgi.network.api;
+package com.dexels.servicediscovery.network.api;
 
 public class NetworkLocation {
 	private final String host;

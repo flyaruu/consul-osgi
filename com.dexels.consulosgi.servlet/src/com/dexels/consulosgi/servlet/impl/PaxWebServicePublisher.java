@@ -19,9 +19,9 @@ import org.osgi.service.http.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dexels.consulosgi.network.api.NetworkLocation;
-import com.dexels.consulosgi.network.api.PortDiscoverer;
 import com.dexels.servicediscovery.api.ServiceRegistryApi;
+import com.dexels.servicediscovery.network.api.NetworkLocation;
+import com.dexels.servicediscovery.network.api.PortDiscoverer;
 
 @Component(name="servlet.registrator",configurationPolicy=ConfigurationPolicy.REQUIRE)
 public class PaxWebServicePublisher {

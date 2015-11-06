@@ -1,120 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<repository increment="1443204207000" name="Release" xmlns="http://www.osgi.org/xmlns/repository/v1.0.0">
+<repository increment="1446814658000" name="Release" xmlns="http://www.osgi.org/xmlns/repository/v1.0.0">
   <resource>
     <capability namespace="osgi.identity">
-      <attribute name="osgi.identity" value="com.dexels.sharedconfigstore"/>
+      <attribute name="osgi.identity" value="com.dexels.consulosgi.api"/>
       <attribute name="type" value="osgi.bundle"/>
-      <attribute name="version" type="Version" value="0.9.0.201509251803"/>
+      <attribute name="version" type="Version" value="1.0.0.201511061257"/>
     </capability>
     <capability namespace="osgi.content">
-      <attribute name="osgi.content" value="37a38175d0771331a818fa7e002cbd7d48b6b81d3cdff435e30ae8d5e2d35f5e"/>
-      <attribute name="url" value="com.dexels.sharedconfigstore/com.dexels.sharedconfigstore-0.9.0.jar"/>
-      <attribute name="size" type="Long" value="34105"/>
+      <attribute name="osgi.content" value="966af03e1e010680f5b87173812ace064fec317be4d474e945bebe53362aba82"/>
+      <attribute name="url" value="com.dexels.consulosgi.api/com.dexels.consulosgi.api-1.0.0.jar"/>
+      <attribute name="size" type="Long" value="17859"/>
       <attribute name="mime" value="application/vnd.osgi.bundle"/>
     </capability>
     <capability namespace="osgi.wiring.bundle">
-      <attribute name="osgi.wiring.bundle" value="com.dexels.sharedconfigstore"/>
-      <attribute name="bundle-version" type="Version" value="0.9.0.201509251803"/>
+      <attribute name="osgi.wiring.bundle" value="com.dexels.consulosgi.api"/>
+      <attribute name="bundle-version" type="Version" value="1.0.0.201511061257"/>
     </capability>
     <capability namespace="osgi.wiring.host">
-      <attribute name="osgi.wiring.host" value="com.dexels.sharedconfigstore"/>
-      <attribute name="bundle-version" type="Version" value="0.9.0.201509251803"/>
+      <attribute name="osgi.wiring.host" value="com.dexels.consulosgi.api"/>
+      <attribute name="bundle-version" type="Version" value="1.0.0.201511061257"/>
     </capability>
     <capability namespace="osgi.wiring.package">
-      <attribute name="osgi.wiring.package" value="com.dexels.sharedconfigstore.api"/>
+      <attribute name="osgi.wiring.package" value="com.dexels.servicediscovery.network.api"/>
       <attribute name="version" type="Version" value="1.0.0"/>
-      <attribute name="bundle-symbolic-name" value="com.dexels.sharedconfigstore"/>
-      <attribute name="bundle-version" type="Version" value="0.9.0.201509251803"/>
+      <attribute name="bundle-symbolic-name" value="com.dexels.consulosgi.api"/>
+      <attribute name="bundle-version" type="Version" value="1.0.0.201511061257"/>
     </capability>
-    <capability namespace="osgi.service">
-      <attribute name="objectClass" type="List&lt;String&gt;" value="com.dexels.sharedconfigstore.api.SharedConfigurationUpdateListener"/>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="com.dexels.servicediscovery.utils"/>
+      <attribute name="version" type="Version" value="1.0.0"/>
+      <attribute name="bundle-symbolic-name" value="com.dexels.consulosgi.api"/>
+      <attribute name="bundle-version" type="Version" value="1.0.0.201511061257"/>
+      <directive name="uses" value="org.osgi.service.cm"/>
     </capability>
-    <capability namespace="osgi.service">
-      <attribute name="objectClass" type="List&lt;String&gt;" value="com.dexels.sharedconfigstore.consul.ConsulResourceListener"/>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="com.dexels.servicediscovery.api"/>
+      <attribute name="version" type="Version" value="1.0.0"/>
+      <attribute name="bundle-symbolic-name" value="com.dexels.consulosgi.api"/>
+      <attribute name="bundle-version" type="Version" value="1.0.0.201511061257"/>
     </capability>
-    <capability namespace="osgi.service">
-      <attribute name="objectClass" type="List&lt;String&gt;" value="com.dexels.sharedconfigstore.consul.LongPollingScheduler"/>
+    <capability namespace="osgi.wiring.package">
+      <attribute name="osgi.wiring.package" value="com.dexels.servicediscovery.http.api"/>
+      <attribute name="version" type="Version" value="1.0.0"/>
+      <attribute name="bundle-symbolic-name" value="com.dexels.consulosgi.api"/>
+      <attribute name="bundle-version" type="Version" value="1.0.0.201511061257"/>
+      <directive name="uses" value="org.codehaus.jackson"/>
     </capability>
-    <capability namespace="osgi.service">
-      <attribute name="objectClass" type="List&lt;String&gt;" value="com.dexels.sharedconfigstore.api.SharedConfigurationUpdateListener"/>
-      <directive name="uses" value="com.dexels.sharedconfigstore.api"/>
-    </capability>
-    <capability namespace="osgi.service">
-      <attribute name="objectClass" type="List&lt;String&gt;" value="com.dexels.sharedconfigstore.consul.ConsulResourceListener"/>
-      <directive name="uses" value="com.dexels.sharedconfigstore.consul"/>
-    </capability>
-    <capability namespace="osgi.service">
-      <attribute name="objectClass" type="List&lt;String&gt;" value="com.dexels.sharedconfigstore.consul.LongPollingScheduler"/>
-      <directive name="uses" value="com.dexels.sharedconfigstore.consul"/>
-    </capability>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=com.dexels.sharedconfigstore.api)(version&gt;=1.0.0)(!(version&gt;=2.0.0)))"/>
-    </requirement>
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(&amp;(osgi.wiring.package=org.apache.commons.codec.binary)(version&gt;=1.10.0)(!(version&gt;=2.0.0)))"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.apache.http)(version&gt;=4.4.0)(!(version&gt;=5.0.0)))"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.apache.http.client.config)(version&gt;=4.4.0)(!(version&gt;=5.0.0)))"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.apache.http.client.methods)(version&gt;=4.4.0)(!(version&gt;=5.0.0)))"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.apache.http.concurrent)(version&gt;=4.4.0)(!(version&gt;=5.0.0)))"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.apache.http.impl.client)(version&gt;=4.4.0)(!(version&gt;=5.0.0)))"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.apache.http.impl.nio.client)(version&gt;=4.2.0)(!(version&gt;=5.0.0)))"/>
     </requirement>
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(&amp;(osgi.wiring.package=org.codehaus.jackson)(version&gt;=1.9.0)(!(version&gt;=2.0.0)))"/>
     </requirement>
     <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.codehaus.jackson.map)(version&gt;=1.9.0)(!(version&gt;=2.0.0)))"/>
-    </requirement>
-    <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(&amp;(osgi.wiring.package=org.codehaus.jackson.node)(version&gt;=1.9.0)(!(version&gt;=2.0.0)))"/>
     </requirement>
     <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.osgi.framework)(version&gt;=1.7.0)(!(version&gt;=2.0.0)))"/>
+      <directive name="filter" value="(&amp;(osgi.wiring.package=org.osgi.framework)(version&gt;=1.3.0)(!(version&gt;=2.0.0)))"/>
     </requirement>
     <requirement namespace="osgi.wiring.package">
       <directive name="filter" value="(&amp;(osgi.wiring.package=org.osgi.service.cm)(version&gt;=1.5.0)(!(version&gt;=2.0.0)))"/>
     </requirement>
     <requirement namespace="osgi.wiring.package">
-      <directive name="filter" value="(&amp;(osgi.wiring.package=org.slf4j)(version&gt;=1.7.0)(!(version&gt;=2.0.0)))"/>
-    </requirement>
-    <requirement namespace="osgi.service">
-      <directive name="filter" value="(objectClass=com.dexels.sharedconfigstore.consul.LongPollingScheduler)"/>
-      <directive name="effective" value="active"/>
-    </requirement>
-    <requirement namespace="osgi.service">
-      <directive name="filter" value="(objectClass=org.osgi.service.cm.ConfigurationAdmin)"/>
-      <directive name="effective" value="active"/>
+      <directive name="filter" value="(&amp;(osgi.wiring.package=org.slf4j)(version&gt;=1.6.0)(!(version&gt;=2.0.0)))"/>
     </requirement>
     <requirement namespace="osgi.ee">
-      <directive name="filter" value="(&amp;(osgi.ee=JavaSE)(version=1.7))"/>
-    </requirement>
-    <requirement namespace="osgi.service">
-      <directive name="filter" value="(objectClass=org.osgi.service.cm.ConfigurationAdmin)"/>
-      <directive name="effective" value="active"/>
-    </requirement>
-    <requirement namespace="osgi.service">
-      <directive name="filter" value="(objectClass=org.osgi.service.cm.ConfigurationAdmin)"/>
-      <directive name="effective" value="active"/>
-    </requirement>
-    <requirement namespace="osgi.service">
-      <directive name="filter" value="(objectClass=com.dexels.sharedconfigstore.consul.LongPollingScheduler)"/>
-      <directive name="effective" value="active"/>
-    </requirement>
-    <requirement namespace="osgi.extender">
-      <directive name="filter" value="(&amp;(osgi.extender=osgi.component)(version&gt;=1.1.0)(!(version&gt;=2.0.0)))"/>
-      <directive name="effective" value="active"/>
+      <directive name="filter" value="(&amp;(osgi.ee=JavaSE)(version=1.8))"/>
     </requirement>
   </resource>
 </repository>

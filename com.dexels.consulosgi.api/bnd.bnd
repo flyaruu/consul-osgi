@@ -6,8 +6,9 @@
 	jackson-mapper-lgpl;version=1.9,\
 	org.apache.commons.codec;version=1.10
 -dsannotations: *
-Bundle-Version: 0.0.0.${tstamp}
+Bundle-Version: 1.0.0.${tstamp}
 Export-Package: \
+	com.dexels.servicediscovery.network.api,\
 	com.dexels.servicediscovery.utils,\
 	com.dexels.servicediscovery.api,\
 	com.dexels.servicediscovery.http.api

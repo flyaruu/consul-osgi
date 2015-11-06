@@ -24,7 +24,7 @@ Private-Package: \
 	com.dexels.consulosgi.servicediscovery.impl
 Export-Package: \
 	com.dexels.sharedconfigstore.api,\
-	com.dexels.consulosgi.network.api,\
+	com.dexels.servicediscovery.network.api,\
 	com.dexels.servicediscovery.api,\
 	com.dexels.servicediscovery.http.api,\
 	com.dexels.sharedconfigstore.api
