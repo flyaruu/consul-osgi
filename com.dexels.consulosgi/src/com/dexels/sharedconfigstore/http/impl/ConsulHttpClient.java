@@ -23,10 +23,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.dexels.servicediscovery.http.api.HttpJsonApi;
 import com.dexels.servicediscovery.http.api.HttpRawApi;
@@ -34,13 +33,12 @@ import com.dexels.servicediscovery.http.api.HttpRawApi;
 @Component(name="consul.http",configurationPolicy=ConfigurationPolicy.REQUIRE,property={"type=consul"})
 public class ConsulHttpClient implements HttpJsonApi, HttpRawApi {
 	
-	
-	private final static Logger logger = LoggerFactory.getLogger(ConsulHttpClient.class);
 	private CloseableHttpClient syncClient;
 	private ObjectMapper mapper;
 	private String blockIntervalInSeconds = "20";
 	private String consulServer = null;
 
+	@Activate
     public void activate(Map<String, Object> settings) {
 		mapper = new ObjectMapper().configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
 		int timeout = Integer.parseInt(blockIntervalInSeconds) + 10;
@@ -99,7 +97,7 @@ public class ConsulHttpClient implements HttpJsonApi, HttpRawApi {
 	}
 	
 	private void debugCall(String method, String path, JsonNode body) throws JsonGenerationException, JsonMappingException, IOException {
-		logger.info("Debugging {} request to path: {}",method,path);
+//		logger.info("Debugging {} request to path: {}",method,path);
 		if(body!=null) {
 			mapper.writer().withDefaultPrettyPrinter().writeValue(System.err, body);
 		}
@@ -122,7 +120,7 @@ public class ConsulHttpClient implements HttpJsonApi, HttpRawApi {
 	}
 
 	private byte[] processRawRequest(final HttpUriRequest request, boolean expectReply)
-			throws IOException, ClientProtocolException, JsonProcessingException {
+			throws IOException, ClientProtocolException {
 		CloseableHttpResponse response = syncClient.execute(request);
 		try {
 			if (response.getStatusLine().getStatusCode() >= 300) {
@@ -138,7 +136,7 @@ public class ConsulHttpClient implements HttpJsonApi, HttpRawApi {
 		}
 		return null;
 	}
-	// TODO Something streamier perhaps
+
 	private HttpEntity createEntity(JsonNode body) throws IOException, JsonGenerationException, JsonMappingException {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			mapper.writeValue(baos,body);
@@ -153,26 +151,29 @@ public class ConsulHttpClient implements HttpJsonApi, HttpRawApi {
 
 	@Override
 	public byte[] get(String path) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		final HttpGet request = new HttpGet(consulServer+path);
+		return processRawRequest(request,true);
 	}
 
 	@Override
 	public byte[] head(String path) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		final HttpHead request = new HttpHead(consulServer+path);
+		return processRawRequest(request,false);
 	}
 
 	@Override
 	public byte[] delete(String path) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		final HttpDelete request = new HttpDelete(consulServer+path);
+		return processRawRequest(request,false);
 	}
 
 	@Override
 	public byte[] post(String path, byte[] body, boolean expectReply) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		final HttpPost request = new HttpPost(consulServer+path);
+		if(body!=null) {
+			request.setEntity(new ByteArrayEntity(body));
+		}
+		return processRawRequest(request,expectReply);
 	}
 
 }

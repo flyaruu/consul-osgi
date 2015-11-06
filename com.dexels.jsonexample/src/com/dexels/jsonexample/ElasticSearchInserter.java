@@ -15,6 +15,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dexels.jsonhttp.api.JsonHttpDriver;
 
@@ -28,6 +30,9 @@ public class ElasticSearchInserter implements Runnable{
 	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 
+	private final static Logger logger = LoggerFactory.getLogger(ElasticSearchInserter.class);
+
+
 	@Activate
 	public void activate() {
 		this.thread = new Thread(this);
@@ -37,6 +42,7 @@ public class ElasticSearchInserter implements Runnable{
 
 	@Deactivate
 	public void deactivate() {
+		logger.warn("Deactivating Elasticsearch inserter");
 		this.active = false;
 		if(this.thread!=null) {
 			this.thread.interrupt();
@@ -57,7 +63,7 @@ public class ElasticSearchInserter implements Runnable{
 			try {
 				String index = nextIndexId();
 				JsonNode request = createInput(index);
-				JsonNode result = jsonHttpDriver.callJson(request, "/logstash-1/"+index, "POST");
+				jsonHttpDriver.callJson(request, "/logstash-1/"+index, "POST");
 				mapper.writerWithDefaultPrettyPrinter().writeValue(System.err, request);
 				System.err.println("Inserting: "+index);
 			} catch (Throwable e) {
@@ -66,7 +72,6 @@ public class ElasticSearchInserter implements Runnable{
 				try {
 					Thread.sleep(random.nextInt(5000));
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 				}
 			}
 		}

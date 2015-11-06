@@ -12,7 +12,7 @@
 	org.apache.felix.configadmin,\
 	org.apache.felix.metatype,\
 	org.apache.felix.log,\
-	org.apache.felix.eventadmin,\
+	org.apache.felix.eventadmin;version=1.4.4,\
 	org.ops4j.pax.web.pax-web-jetty-bundle;version='[3,4)',\
 	slf4j.api,\
 	slf4j.simple,\
@@ -29,9 +29,11 @@
 	com.dexels.consulosgi;version=latest,\
 	com.dexels.jsonhttp;version=latest,\
 	com.dexels.jsonhttp.api;version=latest,\
-	com.dexels.jsonexample;version=latest,\
 	org.ops4j.pax.web.pax-web-extender-whiteboard,\
-	com.dexels.consulosgi.servlet;version=latest
+	org.apache.felix.webconsole.plugins.event;version=1.1.4,\
+	com.dexels.consulosgi.api;version=latest,\
+	com.dexels.consulosgi.exploder;version=latest,\
+	com.dexels.consulosgi.loader;version=latest
 	org.apache.felix.webconsole
 
 -runrequires: \
@@ -44,5 +46,7 @@
 	osgi.identity;filter:='(osgi.identity=org.apache.felix.fileinstall)',\
 	osgi.identity;filter:='(&(osgi.identity=org.apache.felix.scr)(version>=1.8.2))'
 
+-runproperties: \
+    org.osgi.framework.bootdelegation=com.yourkit.*
 ## Uncomment if you need to change the HTTP port
 #-runproperties: org.osgi.service.http.port=8080

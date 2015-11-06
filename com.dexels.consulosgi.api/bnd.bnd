@@ -1,0 +1,13 @@
+-buildpath: \
+	osgi.core,\
+	osgi.cmpn;version=5.0.0,\
+	slf4j.api,\
+	jackson-core-lgpl;version=1.9,\
+	jackson-mapper-lgpl;version=1.9,\
+	org.apache.commons.codec;version=1.10
+-dsannotations: *
+Bundle-Version: 0.0.0.${tstamp}
+Export-Package: \
+	com.dexels.servicediscovery.utils,\
+	com.dexels.servicediscovery.api,\
+	com.dexels.servicediscovery.http.api

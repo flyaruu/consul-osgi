@@ -10,7 +10,8 @@
 	osgi.core;version=5.0,\
 	org.apache.httpcomponents.httpclient;version=4.4,\
 	org.apache.commons.codec,\
-	javax.servlet;version=3.0
+	javax.servlet;version=3.0,\
+	com.dexels.consulosgi.api
 Bundle-Version: 0.9.0.${tstamp}
 -dsannotations:  \
 	*
@@ -18,14 +19,9 @@ Bundle-Version: 0.9.0.${tstamp}
 Private-Package: \
 	com.dexels.sharedconfigstore,\
 	com.dexels.servicediscovery.consul.impl,\
-	com.dexels.sharedconfigstore.consul.local.impl,\
-	com.dexels.sharedconfigstore.servlet.example,\
 	com.dexels.sharedconfigstore.http.impl,\
-	com.dexels.sharedconfigstore.consul.test,\
 	com.dexels.consulosgi.network.impl,\
-	com.dexels.consulosgi.servicediscovery.impl,\
-	com.dexels.sharedconfigstore.consul,\
-	com.dexels.sharedconfigstore.impl
+	com.dexels.consulosgi.servicediscovery.impl
 Export-Package: \
 	com.dexels.sharedconfigstore.api,\
 	com.dexels.consulosgi.network.api,\

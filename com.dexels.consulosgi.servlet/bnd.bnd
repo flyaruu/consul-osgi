@@ -1,10 +1,9 @@
 -buildpath: \
 	osgi.core,\
 	osgi.cmpn;version=5.0.0,\
-	com.dexels.jsonhttp.api;version=latest,\
-	jackson-core-lgpl,\
-	jackson-mapper-lgpl,\
+	com.dexels.consulosgi;version=latest,\
+	javax.servlet;version=3.0,\
 	slf4j.api;version=1.7
 -dsannotations: *
 Bundle-Version: 0.0.0.${tstamp}
-Private-Package: com.dexels.jsonexample
+Private-Package: com.dexels.consulosgi.servlet.impl

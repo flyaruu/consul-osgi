@@ -4,11 +4,12 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 
 import com.dexels.consulosgi.network.api.NetworkLocation;
 import com.dexels.consulosgi.network.api.PortDiscoverer;
 
-@Component(name="port.discoverer.default")
+@Component(name="port.discoverer.default",configurationPolicy=ConfigurationPolicy.REQUIRE,immediate=true)
 public class DefaultPortDiscoverer implements PortDiscoverer {
 
 	@Override

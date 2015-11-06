@@ -23,7 +23,7 @@ import com.dexels.servicediscovery.api.ServiceRegistryApi;
 import com.dexels.servicediscovery.http.api.HttpJsonApi;
 import com.dexels.servicediscovery.http.api.HttpRawApi;
 
-@Component(name="dexels.consul.publisher",configurationPolicy=ConfigurationPolicy.REQUIRE)
+@Component(name="dexels.consul.publisher",immediate=true,configurationPolicy=ConfigurationPolicy.REQUIRE)
 public class ConsulServicePublisher implements ServiceRegistryApi {
 
 	
