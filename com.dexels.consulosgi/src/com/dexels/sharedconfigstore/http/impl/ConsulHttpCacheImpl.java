@@ -1,17 +1,21 @@
 package com.dexels.sharedconfigstore.http.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.codehaus.jackson.JsonNode;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,18 +24,18 @@ import com.dexels.servicediscovery.http.api.HttpCache;
 import com.dexels.servicediscovery.http.api.HttpRawApi;
 import com.dexels.servicediscovery.http.api.KeyChange;
 
-@Component(name="dexels.consul.cache",configurationPolicy=ConfigurationPolicy.IGNORE,immediate=true)
-public class ConsulHttpCacheImpl implements HttpCache {
+@Component(name="dexels.consul.cache",configurationPolicy=ConfigurationPolicy.IGNORE,immediate=true,property={"event.topics=indexchange/*"})
+public class ConsulHttpCacheImpl implements HttpCache,EventHandler {
 
 	private final Map<String,byte[]> cache = new HashMap<>();
 	private final Map<String,Integer> cacheIndex = new HashMap<>();
 	private HttpRawApi httpApi;
 	private final static Logger logger = LoggerFactory.getLogger(ConsulHttpCacheImpl.class);
 
-	private enum Events {CREATE,DELETE,MODIFY}
 
 	private EventAdmin eventAdmin;
 
+	
 	@Reference(unbind="clearHttpApi",policy=ReferencePolicy.DYNAMIC,target="(type=consul)")
 	public void setHttpApi(HttpRawApi httpApi) {
 		this.httpApi = httpApi;
@@ -103,9 +107,11 @@ public class ConsulHttpCacheImpl implements HttpCache {
 		}
 		for (String key : missing) {
 			logger.debug("Deleted missing key: "+key);
+			byte[] previous = cache.get(key);
 			cache.remove(key);
+			Integer previousIndex = cacheIndex.get(key);
 			cacheIndex.remove(key);
-			postEvent(Events.DELETE, key,null,null);
+			postEvent(Events.DELETE, key,previousIndex,previous);
 		}
 		
 	}
@@ -130,6 +136,9 @@ public class ConsulHttpCacheImpl implements HttpCache {
 		if(!replaced.startsWith("/")) {
 			return "/"+replaced;
 		}
+		if(replaced.endsWith("/")) {
+			replaced = replaced.substring(0, replaced.length()-1);
+		}
 		return replaced;
 	}
 
@@ -137,5 +146,22 @@ public class ConsulHttpCacheImpl implements HttpCache {
 		String key = value.getKey();
 		cacheIndex.put(key,value.getModifyIndex());
 		cache.put(key, value.getDecodedValue());
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		try {
+			JsonNode changes = (JsonNode) event.getProperty("changes");
+			List<KeyChange> c = new ArrayList<>();
+			for (JsonNode jsonNode : changes) {
+				KeyChange kc = new KeyChange(jsonNode);
+				c.add(kc);
+			}
+			ChangeEvent ce = new ChangeEvent(c);
+			processChange(ce);
+		} catch (Throwable e) {
+			logger.error("Error: ", e);
+		}
+		
 	}
 }

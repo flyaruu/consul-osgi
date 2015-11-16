@@ -1,9 +1,7 @@
 package com.dexels.sharedconfigstore.http.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.http.client.config.RequestConfig;
@@ -25,10 +23,7 @@ import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dexels.servicediscovery.http.api.ChangeEvent;
-import com.dexels.servicediscovery.http.api.HttpCache;
 import com.dexels.servicediscovery.http.api.HttpJsonApi;
-import com.dexels.servicediscovery.http.api.KeyChange;
 
 @Component(name = "dexels.consul.listener", immediate = true,configurationPolicy=ConfigurationPolicy.REQUIRE)
 public class LongPollingHttpListenerImpl {
@@ -42,12 +37,13 @@ public class LongPollingHttpListenerImpl {
 	private CloseableHttpAsyncClient client;
 	private HttpJsonApi consulClient;
 	private EventAdmin eventAdmin;
-	private HttpCache httpCache;
+//	private HttpCache httpCache;
 	private String path;
 	
 	private final ObjectMapper mapper = new ObjectMapper();
 	private boolean active = false;
 	private final Map<String,Object> settings = new HashMap<>();
+	private String name;
 	
 	@Activate
     public void activate(Map<String, Object> settings) {
@@ -55,15 +51,20 @@ public class LongPollingHttpListenerImpl {
 			this.settings.clear();
 			this.settings.putAll(settings);
 			logger.info("ACTIVATING LONGPOLLER");
+			if(this.settings.get("name")!=null) {
+				this.name = (String) this.settings.get("name");
+			} else {
+				this.name = "default";
+			}
 			int timeout = Integer.parseInt(blockIntervalInSeconds) + 10;
 			RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
 			        .setConnectionRequestTimeout(timeout * 1000).setSocketTimeout(timeout * 1000).build();
 			client = HttpAsyncClients.custom().setDefaultRequestConfig(config).build();
 			client.start();
 			this.path = (String) settings.get("path");
+			setActive(true);
 			monitorURL(path);
 			logger.info("ACTIVATED LONGPOLLER");
-			setActive(true);
 		} catch (Throwable e) {
 			logger.error("Catch all: ", e);
 		}
@@ -86,17 +87,17 @@ public class LongPollingHttpListenerImpl {
 	public void clearEventAdmin(EventAdmin eventAdmin) {
 		this.eventAdmin = null;
 	}
-	
-	@Reference(unbind="clearHttpCache",policy=ReferencePolicy.DYNAMIC)
-	public void setHttpCache(HttpCache httpCache) {
-		this.httpCache = httpCache;
-	}
-	
-	public void clearHttpCache(HttpCache httpCache) {
-		this.httpCache = null;
-	}
-	
-	
+//	
+//	@Reference(unbind="clearHttpCache",policy=ReferencePolicy.DYNAMIC)
+//	public void setHttpCache(HttpCache httpCache) {
+//		this.httpCache = httpCache;
+//	}
+//	
+//	public void clearHttpCache(HttpCache httpCache) {
+//		this.httpCache = null;
+//	}
+//	
+//	
 	private void monitorURL(final String path) {
 		if(!isActive()) {
 			logger.warn("No not active, ignoring monitorURL");
@@ -129,6 +130,7 @@ public class LongPollingHttpListenerImpl {
 		Integer prev = lastIndexes.get(path);
 		byte[] old = lastValues.get(path);
 		if(prev!=null && prev.equals(index)) {
+			// no actial change
 		} else {
 			lastIndexes.put(path, index);
 			if (recurse) {
@@ -192,14 +194,19 @@ public class LongPollingHttpListenerImpl {
 
 	}
 
-	void processChanges(JsonNode changes) {
-		List<KeyChange> c = new ArrayList<>();
-		for (JsonNode jsonNode : changes) {
-			KeyChange kc = new KeyChange(jsonNode);
-			c.add(kc);
-		}
-		ChangeEvent ce = new ChangeEvent(c);
-		this.httpCache.processChange(ce);
+	private void processChanges(JsonNode changes) {
+		Map<String,Object> properties = new HashMap<>();
+		properties.put("name", this.name);
+		properties.put("changes", changes);
+		Event event = new Event("indexchange/"+this.name, properties);
+		eventAdmin.sendEvent(event);
+//		List<KeyChange> c = new ArrayList<>();
+//		for (JsonNode jsonNode : changes) {
+//			KeyChange kc = new KeyChange(jsonNode);
+//			c.add(kc);
+//		}
+//		ChangeEvent ce = new ChangeEvent(c);
+//		this.httpCache.processChange(ce);
         monitorURL(path);
 
 	}

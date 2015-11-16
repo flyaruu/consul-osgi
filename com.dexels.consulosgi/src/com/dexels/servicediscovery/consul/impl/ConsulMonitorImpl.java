@@ -60,16 +60,16 @@ private static final String SERVICES = "/v1/catalog/services";
 	public void activate(Map<String,Object> settings, BundleContext bundleContext) {
 		this.servicePrefix = (String)settings.get("servicePrefix");
 		this.containerInfoPrefix = (String)settings.get("containerInfoPrefix");
-		try {
-			monitorConfiguration = ConfigurationUtils.createOrReuseFactoryConfiguration(configAdmin, "dexels.consul.listener", "(id=owned_by_monitor)");
-			Dictionary<String,Object> props = new Hashtable<>();
-			props.put("path", SERVICES);
-			props.put("id", "owned_by_monitor");
-			monitorConfiguration.update(props);
-		
-		} catch (IOException e) {
-			logger.error("Error: ", e);
-		}		
+//		try {
+//			monitorConfiguration = ConfigurationUtils.createOrReuseFactoryConfiguration(configAdmin, "dexels.consul.listener", "(id=owned_by_monitor)");
+//			Dictionary<String,Object> props = new Hashtable<>();
+//			props.put("path", SERVICES);
+//			props.put("id", "owned_by_monitor");
+//			monitorConfiguration.update(props);
+//		
+//		} catch (IOException e) {
+//			logger.error("Error: ", e);
+//		}		
 	}
 
 	@Deactivate

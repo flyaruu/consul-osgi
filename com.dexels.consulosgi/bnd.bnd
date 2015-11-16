@@ -11,8 +11,8 @@
 	org.apache.httpcomponents.httpclient;version=4.4,\
 	org.apache.commons.codec,\
 	javax.servlet;version=3.0,\
-	com.dexels.consulosgi.api
-Bundle-Version: 0.9.0.${tstamp}
+	com.dexels.consulosgi.api;version=latest
+Bundle-Version: 0.10.0.${tstamp}
 -dsannotations:  \
 	*
 -sources: src
