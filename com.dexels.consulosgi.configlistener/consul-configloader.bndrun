@@ -1,0 +1,53 @@
+-runfw: org.apache.felix.framework;version='[4,5)'
+-runee: JavaSE-1.8
+-runsystemcapabilities: ${native_capability}
+
+-resolve.effective: active;skip:="osgi.service"
+
+-runbundles: \
+	org.apache.felix.gogo.runtime,\
+	org.apache.felix.gogo.shell,\
+	org.apache.felix.gogo.command,\
+	org.apache.felix.scr;version='[1.8,2)',\
+	org.apache.felix.configadmin,\
+	org.apache.felix.metatype,\
+	org.apache.felix.log,\
+	org.apache.felix.eventadmin;version=1.4.4,\
+	org.ops4j.pax.web.pax-web-jetty-bundle;version='[3,4)',\
+	slf4j.api,\
+	slf4j.simple,\
+	jackson-core-lgpl;version=1.9,\
+	jackson-mapper-lgpl;version=1.9,\
+	org.apache.commons.logging,\
+	org.apache.commons.codec,\
+	org.apache.httpcomponents.httpcore;version='[4.4.3,4.5)',\
+	org.apache.httpcomponents.httpclient;version='[4.4.1,4.5)',\
+	org.apache.httpcomponents.httpasyncclient;version=4.2.0,\
+	org.apache.felix.webconsole,\
+	org.apache.felix.fileinstall,\
+	org.apache.felix.webconsole.plugins.ds;version=1.0.0,\
+	com.dexels.consulosgi;version=latest,\
+	com.dexels.jsonhttp;version=latest,\
+	com.dexels.jsonhttp.api;version=latest,\
+	org.ops4j.pax.web.pax-web-extender-whiteboard,\
+	org.apache.felix.webconsole.plugins.event;version=1.1.4,\
+	com.dexels.consulosgi.api;version=latest,\
+	com.dexels.consulosgi.exploder;version=latest,\
+	com.dexels.consulosgi.loader;version=latest,\
+	com.dexels.consulosgi.configloader;version=latest
+	org.apache.felix.webconsole
+
+-runrequires: \
+	osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.shell)',\
+	osgi.identity;filter:='(osgi.identity=org.apache.felix.gogo.command)',\
+	osgi.identity;filter:='(osgi.identity=org.apache.felix.webconsole)',\
+	osgi.identity;filter:='(osgi.identity=org.apache.felix.configadmin)',\
+	osgi.identity;filter:='(osgi.identity=org.apache.felix.metatype)',\
+	osgi.identity;filter:='(osgi.identity=org.apache.felix.log)',\
+	osgi.identity;filter:='(osgi.identity=org.apache.felix.fileinstall)',\
+	osgi.identity;filter:='(&(osgi.identity=org.apache.felix.scr)(version>=1.8.2))'
+
+-runproperties: \
+    org.osgi.framework.bootdelegation=com.yourkit.*
+## Uncomment if you need to change the HTTP port
+#-runproperties: org.osgi.service.http.port=8080
