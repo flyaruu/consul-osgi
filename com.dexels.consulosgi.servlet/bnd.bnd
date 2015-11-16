@@ -5,5 +5,5 @@
 	slf4j.api;version=1.7,\
 	com.dexels.consulosgi.api;version=latest
 -dsannotations: *
-Bundle-Version: 0.0.0.${tstamp}
+Bundle-Version: 1.0.0.${tstamp}
 Private-Package: com.dexels.consulosgi.servlet.impl

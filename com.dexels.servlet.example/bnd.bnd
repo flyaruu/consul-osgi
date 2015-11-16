@@ -3,5 +3,5 @@
 	osgi.cmpn;version=5.0.0,\
 	javax.servlet;version=3.0
 -dsannotations: *
-Bundle-Version: 0.0.0.${tstamp}
+Bundle-Version: 1.0.0.${tstamp}
 Private-Package: com.dexels.servlet.example
