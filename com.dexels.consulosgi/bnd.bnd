@@ -12,7 +12,7 @@
 	org.apache.commons.codec,\
 	javax.servlet;version=3.0,\
 	com.dexels.consulosgi.api;version=latest
-Bundle-Version: 0.10.0.${tstamp}
+Bundle-Version: 0.10.1.${tstamp}
 -dsannotations:  \
 	*
 -sources: src

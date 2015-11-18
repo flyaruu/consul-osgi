@@ -33,7 +33,7 @@ public class ConfigListener implements EventHandler {
 
 	private HttpCache httpCache;
 	private String configPrefix = "config";
-	private String clusterName = "test";
+	private String clusterName = null;
 	private ObjectMapper mapper = new ObjectMapper();
 	private ConfigurationAdmin configAdmin;
 	private Configuration consulConfiguration;
@@ -44,11 +44,12 @@ public class ConfigListener implements EventHandler {
 	public void activate(Map<String, Object> settings) {
 		this.clusterName = (String) settings.get("name");
 		if (this.clusterName == null) {
-			logger.error("Can not initialize configlistener: 'name' setting required to ");
+			logger.error("Can not initialize configlistener: 'name' setting required to initialize");
+			return;
 		}
 		try {
 			consulConfiguration = ConfigurationUtils.createOrReuseFactoryConfiguration(configAdmin,
-					"dexels.consul.listener", "(id=owned_by_monitor)",true);
+					"dexels.consul.listener", "(id=owned_by_configloader)",true);
 			Dictionary<String, Object> props = new Hashtable<>();
 			props.put("path", "/v1/kv/" + configPrefix + "/" + clusterName + "?recurse");
 			props.put("id", "owned_by_configloader");

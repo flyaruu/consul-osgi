@@ -7,5 +7,5 @@
 	org.apache.commons.codec;version=1.10,\
 	slf4j.api;version=1.7
 -dsannotations: *
-Bundle-Version: 1.0.0.${tstamp}
+Bundle-Version: 1.0.3.${tstamp}
 Private-Package: com.dexels.consulosgi.configloader
