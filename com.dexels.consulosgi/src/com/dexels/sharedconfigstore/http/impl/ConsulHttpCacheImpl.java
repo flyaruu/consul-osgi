@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonNode;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
@@ -23,6 +22,7 @@ import com.dexels.servicediscovery.http.api.ChangeEvent;
 import com.dexels.servicediscovery.http.api.HttpCache;
 import com.dexels.servicediscovery.http.api.HttpRawApi;
 import com.dexels.servicediscovery.http.api.KeyChange;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Component(name="dexels.consul.cache",configurationPolicy=ConfigurationPolicy.IGNORE,immediate=true,property={"event.topics=indexchange/*"})
 public class ConsulHttpCacheImpl implements HttpCache,EventHandler {

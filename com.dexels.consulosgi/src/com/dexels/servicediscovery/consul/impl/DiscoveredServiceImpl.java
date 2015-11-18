@@ -10,13 +10,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 
 import com.dexels.servicediscovery.api.DiscoveredService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
 @Component(name="osgi.consul.local.service",configurationPolicy=ConfigurationPolicy.REQUIRE,immediate=true)

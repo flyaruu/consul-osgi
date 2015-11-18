@@ -5,8 +5,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -17,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dexels.servicediscovery.utils.ConfigurationUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component(name = "dexels.configstore.configcreator", immediate = true,property={"event.topics=consul/change/sharedstore/*"})
 public class OsgiConfigCreator implements EventHandler {

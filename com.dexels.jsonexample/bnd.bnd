@@ -2,9 +2,9 @@
 	osgi.core,\
 	osgi.cmpn;version=5.0.0,\
 	com.dexels.jsonhttp.api;version=latest,\
-	jackson-core-lgpl,\
-	jackson-mapper-lgpl,\
-	slf4j.api;version=1.7
+	slf4j.api;version=1.7,\
+	com.fasterxml.jackson.core.jackson-core,\
+	com.fasterxml.jackson.core.jackson-databind
 -dsannotations: *
 Bundle-Version: 1.0.0.${tstamp}
 Private-Package: com.dexels.jsonexample

@@ -2,10 +2,10 @@
 	osgi.core,\
 	osgi.cmpn;version=5.0.0,\
 	com.dexels.consulosgi.api;version=latest,\
-	jackson-core-lgpl;version=1.9,\
-	jackson-mapper-lgpl;version=1.9,\
 	org.apache.commons.codec;version=1.10,\
-	slf4j.api;version=1.7
+	slf4j.api;version=1.7,\
+	com.fasterxml.jackson.core.jackson-databind,\
+	com.fasterxml.jackson.core.jackson-core
 -dsannotations: *
 Bundle-Version: 1.0.3.${tstamp}
 Private-Package: com.dexels.consulosgi.configloader

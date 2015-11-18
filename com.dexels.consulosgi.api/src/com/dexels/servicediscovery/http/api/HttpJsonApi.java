@@ -2,7 +2,7 @@ package com.dexels.servicediscovery.http.api;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public interface HttpJsonApi {
 	public JsonNode getJson(String path) throws IOException;

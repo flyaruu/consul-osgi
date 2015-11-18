@@ -2,9 +2,8 @@
 	osgi.core,\
 	osgi.cmpn;version=5.0.0,\
 	slf4j.api,\
-	jackson-core-lgpl;version=1.9,\
-	jackson-mapper-lgpl;version=1.9,\
-	org.apache.commons.codec;version=1.10
+	org.apache.commons.codec;version=1.10,\
+	com.fasterxml.jackson.core.jackson-databind
 -dsannotations: *
 Bundle-Version: 2.0.4.${tstamp}
 Export-Package: \

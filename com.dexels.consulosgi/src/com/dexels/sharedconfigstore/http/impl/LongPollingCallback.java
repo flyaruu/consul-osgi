@@ -7,9 +7,10 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.concurrent.FutureCallback;
-import org.codehaus.jackson.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class LongPollingCallback implements FutureCallback<HttpResponse> {
 

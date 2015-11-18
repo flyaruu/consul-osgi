@@ -6,10 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -22,6 +18,10 @@ import org.slf4j.LoggerFactory;
 import com.dexels.servicediscovery.api.ServiceRegistryApi;
 import com.dexels.servicediscovery.http.api.HttpJsonApi;
 import com.dexels.servicediscovery.http.api.HttpRawApi;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component(name="dexels.consul.publisher",immediate=true,configurationPolicy=ConfigurationPolicy.REQUIRE)
 public class ConsulServicePublisher implements ServiceRegistryApi {
@@ -86,7 +86,7 @@ public class ConsulServicePublisher implements ServiceRegistryApi {
 		ObjectNode request = mapper.createObjectNode();
 		request.put("Name", name);
 		ArrayNode tagsNode = mapper.createArrayNode();
-		request.put("Tags", tagsNode);
+		request.set("Tags", tagsNode);
 		Set<String> localTags = new HashSet<>(this.tags);
 		localTags.addAll(tags);
 		for (String tag : localTags) {

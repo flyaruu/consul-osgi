@@ -6,11 +6,6 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
@@ -27,6 +22,11 @@ import org.slf4j.LoggerFactory;
 import com.dexels.servicediscovery.http.api.HttpCache;
 import com.dexels.servicediscovery.http.api.HttpCache.Events;
 import com.dexels.servicediscovery.utils.ConfigurationUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component(name = "dexels.consul.configlistener", configurationPolicy=ConfigurationPolicy.REQUIRE, immediate = true, property = { "event.topics=consul/change/*" })
 public class ConfigListener implements EventHandler {

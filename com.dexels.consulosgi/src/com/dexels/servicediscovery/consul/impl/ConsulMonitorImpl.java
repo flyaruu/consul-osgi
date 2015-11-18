@@ -1,18 +1,11 @@
 package com.dexels.servicediscovery.consul.impl;
 
 import java.io.IOException;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -32,11 +25,16 @@ import com.dexels.servicediscovery.api.DiscoveredService;
 import com.dexels.servicediscovery.api.PublishedService;
 import com.dexels.servicediscovery.http.api.HttpJsonApi;
 import com.dexels.servicediscovery.utils.ConfigurationUtils;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component(name="consul.http.monitor",enabled=true, immediate=true,configurationPolicy=ConfigurationPolicy.REQUIRE,property={"event.topics=consul/v1/catalog/services"})
 public class ConsulMonitorImpl implements EventHandler {
 	
-private static final String SERVICES = "/v1/catalog/services";
+//private static final String SERVICES = "/v1/catalog/services";
 
 	//	private LongPollingScheduler consulListener = null;
 	private HttpJsonApi httpApi = null;
@@ -105,7 +103,7 @@ private static final String SERVICES = "/v1/catalog/services";
 			logger.info("Received data: {}",new String(input));
 			ObjectNode services = (ObjectNode) mapper.readTree(input);
 //			ObjectNode services = (ObjectNode) event.getNewValue();
-			Iterator<String> names = services.getFieldNames();
+			Iterator<String> names = services.fieldNames();
 			
 			
 			// copy, so orphans can be detected

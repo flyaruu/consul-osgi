@@ -1,8 +1,9 @@
 package com.dexels.servicediscovery.http.api;
 
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ObjectNode;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class KeyChange {
 	private final int createIndex;
