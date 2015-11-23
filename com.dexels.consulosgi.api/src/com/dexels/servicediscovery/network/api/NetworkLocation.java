@@ -1,5 +1,9 @@
 package com.dexels.servicediscovery.network.api;
 
+import aQute.bnd.annotation.ProviderType;
+
+@ProviderType
+
 public class NetworkLocation {
 	private final String host;
 	private final int port;

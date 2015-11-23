@@ -9,6 +9,9 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import aQute.bnd.annotation.ProviderType;
+
+@ProviderType
 public class ConfigurationUtils {
 	
 	
@@ -22,8 +25,9 @@ public class ConfigurationUtils {
 		return config;
 	}
 
-	public static Configuration createOrReuseFactoryConfiguration(ConfigurationAdmin configAdmin,String factoryPid, final String filter,boolean createIfAbsent)
+	public static Configuration createOrReuseFactoryConfiguration(ConfigurationAdmin configAdmin,String factoryPid, final String customFilter,boolean createIfAbsent)
 			throws IOException {
+		final String filter = createCustomFilter(factoryPid,customFilter);
 		Configuration cc = null;
 		try {
 			Configuration[] c = configAdmin.listConfigurations(filter);
@@ -52,6 +56,7 @@ public class ConfigurationUtils {
 		Dictionary<String, Object> old = c.getProperties();
 		if (old != null) {
 			if (!old.equals(settings)) {
+				logger.info("updating existing");
 				c.update(settings);
 			} else {
 				logger.info("Ignoring equal");
@@ -60,7 +65,7 @@ public class ConfigurationUtils {
 			// this will make this component 'own' this configuration, unsure if
 			// this is desirable.
 			c.update(settings);
-			logger.info("updating");
+			logger.info("updating new");
 		}
 	}
 
@@ -78,6 +83,14 @@ public class ConfigurationUtils {
 		return "(&(service.factoryPid="+factoryPid+")(pid="+pid+"))";
 	}
 
+	private static String createCustomFilter(String factoryPid,String filter) {
+		if(filter.indexOf("factoryPid")!=-1) {
+			logger.warn("Already seems to contain factory pid, using original filter");
+			return filter;
+		}
+		return "(&(service.factoryPid="+factoryPid+")"+filter+")";
+	}
+	
 	public static void deleteConfig(ConfigurationAdmin configAdmin, String factoryPid, String pid) throws IOException {
 		if(factoryPid==null) {
 			Configuration config = configAdmin.getConfiguration(pid,null);

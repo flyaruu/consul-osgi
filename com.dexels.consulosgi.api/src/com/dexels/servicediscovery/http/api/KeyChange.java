@@ -5,6 +5,9 @@ import org.apache.commons.codec.binary.Base64;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import aQute.bnd.annotation.ProviderType;
+
+@ProviderType
 public class KeyChange {
 	private final int createIndex;
 	private final int modifyIndex;

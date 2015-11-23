@@ -2,6 +2,9 @@ package com.dexels.servicediscovery.http.api;
 
 import java.io.IOException;
 
+import aQute.bnd.annotation.ProviderType;
+
+@ProviderType
 public interface HttpRawApi {
 	public byte[] get(String path) throws IOException;
 	public byte[] head(String path) throws IOException;

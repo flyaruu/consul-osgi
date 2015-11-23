@@ -3,9 +3,10 @@
 	osgi.cmpn;version=5.0.0,\
 	slf4j.api,\
 	org.apache.commons.codec;version=1.10,\
-	com.fasterxml.jackson.core.jackson-databind
+	com.fasterxml.jackson.core.jackson-databind,\
+	biz.aQute.bnd.annotation;version=3.0
 -dsannotations: *
-Bundle-Version: 3.0.1.${tstamp}
+Bundle-Version: 3.0.7.${tstamp}
 Export-Package: \
 	com.dexels.servicediscovery.network.api,\
 	com.dexels.servicediscovery.utils,\

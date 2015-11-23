@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import aQute.bnd.annotation.ProviderType;
+
+@ProviderType
 public interface HttpJsonApi {
 	public JsonNode getJson(String path) throws IOException;
 	public JsonNode headJson(String path) throws IOException;

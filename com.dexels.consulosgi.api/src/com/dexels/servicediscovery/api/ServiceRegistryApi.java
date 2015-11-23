@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import aQute.bnd.annotation.ProviderType;
+
+@ProviderType
 public interface ServiceRegistryApi {
 
 	public String registerService(String name, String host, int port, String alias, Map<String, Object> attributes,

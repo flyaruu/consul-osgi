@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import aQute.bnd.annotation.ProviderType;
+
+@ProviderType
 public class ChangeEvent {
 	
 	private final Map<String,KeyChange> changeMap = new HashMap<>();
