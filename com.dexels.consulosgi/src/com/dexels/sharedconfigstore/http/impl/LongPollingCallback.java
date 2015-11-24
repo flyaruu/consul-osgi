@@ -1,3 +1,4 @@
+
 package com.dexels.sharedconfigstore.http.impl;
 
 import java.io.ByteArrayOutputStream;
@@ -66,7 +67,7 @@ public class LongPollingCallback implements FutureCallback<HttpResponse> {
 	}
 
     public void failed(final Exception ex) {
-    	logger.error("Error calling path: "+key, ex);
+    	logger.error("Error calling path: {} full url: ",key,request.getURI(), ex);
     	scheduler.callFailed(key, -1);
     }
 

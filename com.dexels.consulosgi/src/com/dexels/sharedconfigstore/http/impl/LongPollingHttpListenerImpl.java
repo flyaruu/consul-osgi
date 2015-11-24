@@ -57,6 +57,7 @@ public class LongPollingHttpListenerImpl {
 				this.name = "default";
 			}
 			int timeout = Integer.parseInt(blockIntervalInSeconds) + 10;
+			logger.info("Setting HTTP timeout to: {}",timeout);
 			RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout * 1000)
 			        .setConnectionRequestTimeout(timeout * 1000).setSocketTimeout(timeout * 1000).build();
 			client = HttpAsyncClients.custom().setDefaultRequestConfig(config).build();
@@ -112,7 +113,7 @@ public class LongPollingHttpListenerImpl {
         	currentCallbacks.put(path, callback);
         	client.execute(get,callback);
         } catch (Exception e) {
-            logger.error("Got Exception on performing GET: ", e);
+            logger.error("Got Exception on scheduling GET: ", e);
         }
 	}
 
@@ -136,8 +137,12 @@ public class LongPollingHttpListenerImpl {
 			if (recurse) {
 				JsonNode changes;
 				try {
-					changes = mapper.readTree(bs);
-					processChanges(changes);
+					if(bs.length>0) {
+						changes = mapper.readTree(bs);
+						processChanges(changes);
+					} else {
+						logger.debug("Empty change, not reporting");
+					}
 				} catch (JsonProcessingException e) {
 					logger.error("Error: ", e);
 				} catch (IOException e) {
@@ -200,13 +205,6 @@ public class LongPollingHttpListenerImpl {
 		properties.put("changes", changes);
 		Event event = new Event("indexchange/"+this.name, properties);
 		eventAdmin.sendEvent(event);
-//		List<KeyChange> c = new ArrayList<>();
-//		for (JsonNode jsonNode : changes) {
-//			KeyChange kc = new KeyChange(jsonNode);
-//			c.add(kc);
-//		}
-//		ChangeEvent ce = new ChangeEvent(c);
-//		this.httpCache.processChange(ce);
         monitorURL(path);
 
 	}
