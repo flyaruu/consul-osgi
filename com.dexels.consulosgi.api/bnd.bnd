@@ -6,7 +6,7 @@
 	com.fasterxml.jackson.core.jackson-databind,\
 	biz.aQute.bnd.annotation;version=3.0
 -dsannotations: *
-Bundle-Version: 3.0.7.${tstamp}
+Bundle-Version: 4.0.0.${tstamp}
 Export-Package: \
 	com.dexels.servicediscovery.network.api,\
 	com.dexels.servicediscovery.utils,\

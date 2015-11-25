@@ -93,14 +93,28 @@ public class ConfigListener implements EventHandler {
 		processValue(key, decodedValue,Events.CREATE);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void processValue(String key,byte[] bb,Events operation) throws IOException {
-		ObjectNode on = null;
+		JsonNode on = null;
 		if (bb.length == 0) {
 			on = mapper.createObjectNode();
 		} else {
-			on = (ObjectNode) mapper.readTree(bb);
+			on = mapper.readTree(bb);
 		}
+		if(on instanceof ArrayNode) {
+			ArrayNode an = (ArrayNode)on;
+			logger.info("Array node detected, didn't expect that: {}",mapper.writer().withDefaultPrettyPrinter().writeValueAsString(an));
+			for (JsonNode jsonNode : an) {
+				processMap(key, operation, (ObjectNode)jsonNode);
+				
+			}
+		} else {
+			processMap(key, operation, (ObjectNode)on);
+			
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void processMap(String key, Events operation, ObjectNode on) throws IOException {
 		Map<String, Object> result = mapper.convertValue(on, Map.class);
 		Dictionary<String, Object> dict = new Hashtable<>();
 
