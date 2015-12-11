@@ -34,7 +34,11 @@
 	com.dexels.consulosgi.api;version=latest,\
 	com.dexels.consulosgi.exploder;version=latest,\
 	com.dexels.consulosgi.loader;version=latest,\
-	com.dexels.consulosgi.configloader;version=latest
+	com.dexels.consulosgi.configlistener;version=latest,\
+	com.fasterxml.jackson.core.jackson-annotations;version=2.6.3,\
+	com.fasterxml.jackson.core.jackson-core;version=2.6.3,\
+	com.fasterxml.jackson.core.jackson-databind;version=2.6.3,\
+	com.fasterxml.jackson.dataformat.jackson-dataformat-yaml;version=2.6.3
 	org.apache.felix.webconsole
 
 -runrequires: \

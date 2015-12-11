@@ -53,6 +53,7 @@ public class ConfigListener implements EventHandler {
 			Dictionary<String, Object> props = new Hashtable<>();
 			props.put("path", "/v1/kv/" + configPrefix + "/" + clusterName + "?recurse");
 			props.put("id", "owned_by_configloader");
+			props.put("wait", "30");
 			consulConfiguration.update(props);
 
 		} catch (IOException e) {
@@ -92,6 +93,7 @@ public class ConfigListener implements EventHandler {
 		System.err.println("Value: " + new String(decodedValue));
 		processValue(key, decodedValue,Events.CREATE);
 	}
+//	config/test-knvb/dexels.repository.git.repository
 
 	private void processValue(String key,byte[] bb,Events operation) throws IOException {
 		JsonNode on = null;
@@ -115,11 +117,13 @@ public class ConfigListener implements EventHandler {
 
 	@SuppressWarnings("unchecked")
 	private void processMap(String key, Events operation, ObjectNode on) throws IOException {
-		Map<String, Object> result = mapper.convertValue(on, Map.class);
+		Map<String, String> result = mapper.convertValue(on, Map.class);
+		InterpolationHelper.performSubstitution(result);
 		Dictionary<String, Object> dict = new Hashtable<>();
 
-		for (Map.Entry<String, Object> e : result.entrySet()) {
+		for (Map.Entry<String, String> e : result.entrySet()) {
 			dict.put(e.getKey(), e.getValue());
+			System.err.println("Key: "+e.getKey()+" value: "+e.getValue());
 		}
 		String pid = null;
 		if (on.get("pid") != null) {
@@ -186,5 +190,10 @@ public class ConfigListener implements EventHandler {
 		}
 	}
 	
+	public static void main(String[] args) throws JsonProcessingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode node = (ObjectNode) mapper.readTree(ConfigListener.class.getResourceAsStream("example.json"));
+		System.err.println("Node: "+node);
+	}
 	
 }

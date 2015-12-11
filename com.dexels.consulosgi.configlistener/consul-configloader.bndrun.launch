@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="bndtools.launch">
+<booleanAttribute key="clean" value="true"/>
+<booleanAttribute key="dynamicBundles" value="true"/>
+<stringAttribute key="launchTarget" value="com.dexels.consulosgi.configlistener/consul-configloader.bndrun"/>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="CLUSTER" value="test-knvb"/>
+<mapEntry key="CONSUL_URL" value="http://mysql-test1.sportlink-infra.net:8500/"/>
+</mapAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="com.dexels.consulosgi.configlistener"/>
+<booleanAttribute key="trace" value="false"/>
+</launchConfiguration>

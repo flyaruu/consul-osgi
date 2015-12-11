@@ -7,5 +7,5 @@
 	com.fasterxml.jackson.core.jackson-databind,\
 	com.fasterxml.jackson.core.jackson-core
 -dsannotations: *
-Bundle-Version: 1.0.7.${tstamp}
+Bundle-Version: 1.0.9.${tstamp}
 Private-Package: com.dexels.consulosgi.configloader
